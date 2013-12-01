@@ -22,21 +22,23 @@ Marionette.Layout = Marionette.ItemView.extend({
   },
 
   // Layout's render will use the existing region objects the
-  // first time it is called. Subsequent calls will close the
+  // first time it is called. Subsequent calls will destroy the
   // views that the regions are showing and then reset the `el`
   // for the regions to the newly rendered DOM elements.
   render: function(){
+    this.ensureViewIsIntact();
 
-    if (this.isClosed){
+    if (this.isDestroyed){
       // a previously closed layout means we need to
       // completely re-initialize the regions
       this._initializeRegions();
     }
+
     if (this._firstRender) {
       // if this is the first render, don't do anything to
       // reset the regions
       this._firstRender = false;
-    } else if (!this.isClosed){
+    } else if (!this.isDestroyed){
       // If this is not the first render call, then we need to
       // re-initializing the `el` for each region
       this._reInitializeRegions();
@@ -45,11 +47,12 @@ Marionette.Layout = Marionette.ItemView.extend({
     return Marionette.ItemView.prototype.render.apply(this, arguments);
   },
 
-  // Handle closing regions, and then close the view itself.
-  close: function () {
-    if (this.isClosed){ return; }
-    this.regionManager.close();
-    Marionette.ItemView.prototype.close.apply(this, arguments);
+  // Handle destroying regions, and then destroy the view itself.
+  destroy: function () {
+    if (this.isDestroyed){ return; }
+
+    this.regionManager.destroy();
+    Marionette.ItemView.prototype.destroy.apply(this, arguments);
   },
 
   // Add a single region, by name, to the layout
@@ -101,7 +104,7 @@ Marionette.Layout = Marionette.ItemView.extend({
   // Internal method to re-initialize all of the regions by updating the `el` that
   // they point to
   _reInitializeRegions: function(){
-    this.regionManager.closeRegions();
+    this.regionManager.destroyRegions();
     this.regionManager.each(function(region){
       region.reset();
     });
