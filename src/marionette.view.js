@@ -203,6 +203,10 @@ Marionette.View = Backbone.View.extend({
 
     // remove the view from the DOM
     this.remove();
+
+    // remove references to el and $el to allow GC of the view
+    delete this.el;
+    delete this.$el;
   },
 
   // This method binds the elements specified in the "ui" hash inside the view's code with
