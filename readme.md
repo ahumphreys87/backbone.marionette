@@ -11,7 +11,6 @@
 <a href='https://coveralls.io/r/ahumphreys87/backbone.marionette'><img src='https://coveralls.io/repos/ahumphreys87/backbone.marionette/badge.png' alt='Coverage Status' /></a>
 
 
-
 ## About Marionette
 
 Backbone.Marionette is a composite application library for Backbone.js that
