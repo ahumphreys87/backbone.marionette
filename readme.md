@@ -7,7 +7,7 @@
   <a title='Build Status' href="https://travis-ci.org/marionettejs/backbone.marionette">
     <img src='https://secure.travis-ci.org/marionettejs/backbone.marionette.svg?branch=master' />
   </a>
-</p>
+<a href='https://coveralls.io/r/marionettejs/backbone.marionette'><img src='https://coveralls.io/repos/marionettejs/backbone.marionette/badge.png' alt='Coverage Status' /></a></p>
 
 ## About Marionette
 
@@ -39,9 +39,9 @@ to engage in an all-or-nothing migration to begin using Marionette.
 
 ### Chat with us
 
-Find us [on gitter](https://gitter.im/marionettejs/backbone.marionette) or on IRC in the FreeNode.net [#marionette channel](http://freenode.net). 
+Find us [on gitter](https://gitter.im/marionettejs/backbone.marionette) or on IRC in the FreeNode.net [#marionette channel](http://freenode.net).
 
-We're happy to discuss design patterns and learn how you're using Marionette. 
+We're happy to discuss design patterns and learn how you're using Marionette.
 
 
 ### Key Benefits
