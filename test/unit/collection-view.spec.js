@@ -18,12 +18,32 @@ describe('collection view', function() {
       render: function() {
         this.trigger('before:render', this);
         this.$el.html(this.model.get('foo'));
-        this.trigger('render', this);
-      }
+        this.trigger('render');
+      },
+      // Init region manager creates a circular reference, which
+      // explodes Sinon's deep equals assertion. These tests
+      // do not care if the view has a region manager or not.
+      _initializeRegions: function() {},
+      // The ItemView's destroy method tries to destroy the
+      // RegionManager, which, from the above, does not exist.
+      destroy: Marionette.AbstractView.prototype.destroy,
+      onRender: function() {}
     });
 
-    this.CollectionView = Marionette.CollectionView.extend({
-      childView: this.ChildView
+    this.MockCollectionView = Backbone.Marionette.CollectionView.extend({
+      childView: this.ChildView,
+      onBeforeRender: function() {
+        return this.isRendered;
+      },
+      onRender: function() {
+        return this.isRendered;
+      },
+      onBeforeAddChild: function() {},
+      onAddChild: function() {},
+      onBeforeRemoveChild: function() {},
+      onRemoveChild: function() {},
+      onRenderCollection: function() {},
+      onBeforeRenderCollection: function() {}
     });
   });
 
