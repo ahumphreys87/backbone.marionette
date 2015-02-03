@@ -1360,13 +1360,14 @@ describe('collection view', function() {
     });
   });
 
-  describe('has a valid inheritance chain back to Backbone.View', function() {
+  describe('has a valid inheritance chain back to Marionette.AbstractView', function() {
     beforeEach(function() {
-      this.collectionView = new this.ChildView();
+      this.constructor = this.sinon.spy(Marionette, 'AbstractView');
+      this.collectionView = new Marionette.CollectionView();
     });
 
-    it('calls the parent Backbone.View constructor function on instantiation', function() {
-      expect(Backbone.View).to.have.been.called;
+    it('calls the parent Marionette.AbstractViews constructor function on instantiation', function() {
+      expect(this.constructor).to.have.been.called;
     });
   });
 

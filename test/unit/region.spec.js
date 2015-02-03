@@ -60,7 +60,7 @@ describe('region', function() {
         el: '#not-existed-region'
       });
 
-      this.MyView = Backbone.View.extend({
+      this.MyView = Backbone.Marionette.AbstractView.extend({
         render: function() {
           $(this.el).html('some content');
         }
@@ -662,7 +662,7 @@ describe('region', function() {
         el: '#region'
       });
 
-      this.MyView = Backbone.Marionette.View.extend({
+      this.MyView = Backbone.Marionette.AbstractView.extend({
         render: function() {
           $(this.el).html('some content');
         }
@@ -1073,7 +1073,7 @@ describe('region', function() {
       this.region.on('before:empty', this.beforeEmptySpy);
       this.region.on('empty', this.emptySpy);
 
-      this.View = Backbone.Marionette.View.extend({
+      this.View = Backbone.Marionette.AbstractView.extend({
         template: _.template('')
       });
 
@@ -1126,7 +1126,7 @@ describe('region', function() {
         el: '#region'
       });
 
-      this.View = Backbone.Marionette.View.extend({
+      this.View = Backbone.Marionette.AbstractView.extend({
         template: _.template('')
       });
 
