@@ -10,8 +10,7 @@ Marionette.Application = Marionette.Object.extend({
     this._initCallbacks = new Marionette.Callbacks();
     this.submodules = {};
     _.extend(this, options);
-    this._initChannel();
-    Marionette.Object.apply(this, arguments);
+    Marionette.Object.call(this, options);
   },
 
   // Command execution, facilitated by Backbone.Wreqr.Commands
@@ -137,14 +136,5 @@ Marionette.Application = Marionette.Object.extend({
       delete this[name];
       Marionette._triggerMethod(this, 'remove:region', arguments);
     });
-  },
-
-  // Internal method to setup the Wreqr.radio channel
-  _initChannel: function() {
-    this.channelName = _.result(this, 'channelName') || 'global';
-    this.channel = _.result(this, 'channel') || Backbone.Wreqr.radio.channel(this.channelName);
-    this.vent = _.result(this, 'vent') || this.channel.vent;
-    this.commands = _.result(this, 'commands') || this.channel.commands;
-    this.reqres = _.result(this, 'reqres') || this.channel.reqres;
   }
 });
