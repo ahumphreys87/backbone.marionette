@@ -1245,10 +1245,10 @@ describe('collection view', function() {
     });
   });
 
-  describe('when calling childEvents via a childEvents method', function() {
+  describe('when calling childViewEvents via a childEvents method', function() {
     beforeEach(function() {
-      this.CollectionView = this.CollectionView.extend({
-        childEvents: function() {
+      this.CollectionView = this.MockCollectionView.extend({
+        childViewEvents: function() {
           return {
             'some:event': 'someEvent'
           };
@@ -1278,12 +1278,12 @@ describe('collection view', function() {
     });
   });
 
-  describe('when calling childEvents via the childEvents hash', function() {
+  describe('when calling childViewEvents via the childEvents hash', function() {
     beforeEach(function() {
       this.onSomeEventSpy = this.sinon.stub();
 
-      this.CollectionView = this.CollectionView.extend({
-        childEvents: {
+      this.CollectionView = this.MockCollectionView.extend({
+        childViewEvents: {
           'some:event': this.onSomeEventSpy
         }
       });
@@ -1308,10 +1308,10 @@ describe('collection view', function() {
     });
   });
 
-  describe('when calling childEvents via the childEvents hash with a string of the function name', function() {
+  describe('when calling childViewEvents via the childEvents hash with a string of the function name', function() {
     beforeEach(function() {
-      var CollectionView = this.CollectionView.extend({
-        childEvents: {
+      this.CollectionView = this.MockCollectionView.extend({
+        childViewEvents: {
           'some:event': 'someEvent'
         }
       });
@@ -1339,10 +1339,11 @@ describe('collection view', function() {
     });
   });
 
-  describe('calling childEvents via the childEvents hash with a string of a nonexistent function name', function() {
+  describe('calling childEvents via the childViewEvents hash with a string of a nonexistent function name', function() {
     beforeEach(function() {
-      var CollectionView = this.CollectionView.extend({
-        childEvents: {
+      this.CollectionView = Marionette.CollectionView.extend({
+        childView: this.ChildView,
+        childViewEvents: {
           'render': 'nonexistentFn'
         }
       });

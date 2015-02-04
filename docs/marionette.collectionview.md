@@ -22,7 +22,7 @@ will provide features such as `onShow` callbacks, etc. Please see
   * [CollectionView's `getChildView`](#collectionviews-getchildview)
   * [CollectionView's `childViewOptions`](#collectionviews-childviewoptions)
   * [CollectionView's `childViewEventPrefix`](#collectionviews-childvieweventprefix)
-  * [CollectionView's `childEvents`](#collectionviews-childevents)
+  * [CollectionView's `childViewEvents`](#collectionviews-childviewevents)
   * [CollectionView's `buildChildView`](#collectionviews-buildchildview)
   * [CollectionView's `removeChildView`](#collectionviews-removechildview)
   * [CollectionView's `addChild`](#collectionviews-addchild)
@@ -217,16 +217,16 @@ c.render();
 The `childViewEventPrefix` can be provided in the view definition or
 in the constructor function call, to get a view instance.
 
-### CollectionView's `childEvents`
+### CollectionView's `childViewEvents`
 
-A `childEvents` hash or method permits handling of child view events without manually setting bindings. The values of the hash can either be a function or a string method name on the collection view.
+You can specify a `childViewEvents` hash or method which allows you to capture all bubbling childEvents without having to manually set bindings. The keys of the hash can either be a function or a string that is the name of a method on the collection view.
 
 ```js
 // childEvents can be specified as a hash...
 var MyCollectionView = Marionette.CollectionView.extend({
 
-  childEvents: {
-    // This callback will be called whenever a child is rendered or emits a `render` event
+  // This callback will be called whenever a child is rendered or emits a `render` event
+  childViewEvents: {
     render: function() {
       console.log('A child view has been rendered.');
     }
@@ -236,7 +236,7 @@ var MyCollectionView = Marionette.CollectionView.extend({
 // ...or as a function that returns a hash.
 var MyCollectionView = Marionette.CollectionView.extend({
 
-  childEvents: function() {
+  childViewEvents: function() {
     return {
       render: this.onChildRendered
     }
