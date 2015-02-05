@@ -15,12 +15,12 @@ describe('collection view', function() {
 
     var spec = this;
 
-    this.ChildView = Backbone.Marionette.ItemView.extend({
+    this.ChildView = Marionette.View.extend({
       tagName: 'span',
       // Stub methods in contructor to ensure calls are counted from the moment the parent
       // CollectionView instantiates it.
       constructor: function(options) {
-        Marionette.ItemView.prototype.constructor.call(this, options);
+        Marionette.View.prototype.constructor.call(this, options);
         this.onBeforeShow = spec.sinon.stub();
         this.onShow = spec.sinon.stub();
         this.onDomRefresh = spec.sinon.stub();
@@ -34,7 +34,7 @@ describe('collection view', function() {
       // explodes Sinon's deep equals assertion. These tests
       // do not care if the view has a region manager or not.
       _initializeRegions: function() {},
-      // The ItemView's destroy method tries to destroy the
+      // The View's destroy method tries to destroy the
       // RegionManager, which, from the above, does not exist.
       destroy: Marionette.AbstractView.prototype.destroy,
       onRender: function() {},
@@ -634,7 +634,7 @@ describe('collection view', function() {
 
       this.model = new Backbone.Model({foo: 'bar'});
 
-      this.EmptyView = Backbone.View.extend({
+      this.EmptyView = Backbone.Marionette.View.extend({
         render: function() {}
       });
 
@@ -761,21 +761,21 @@ describe('collection view', function() {
         template: '#itemTemplate',
         collection: this.collection
       });
-      this.collectionView.someItemViewCallback = function() {};
+      this.collectionView.someViewCallback = function() {};
       this.collectionView.render();
 
       this.childModel = this.collection.at(0);
       this.childView = this.collectionView.children.findByIndex(0);
 
       this.collectionView.listenTo(this.collection, 'foo', this.collectionView.someCallback);
-      this.collectionView.listenTo(this.collectionView, 'item:foo', this.collectionView.someItemViewCallback);
+      this.collectionView.listenTo(this.collectionView, 'item:foo', this.collectionView.someViewCallback);
 
       this.sinon.spy(this.childView, 'destroy');
       this.sinon.spy(this.collectionView, '_onCollectionRemove');
       this.sinon.spy(this.collectionView, 'stopListening');
       this.sinon.spy(this.collectionView, 'remove');
       this.sinon.spy(this.collectionView, 'someCallback');
-      this.sinon.spy(this.collectionView, 'someItemViewCallback');
+      this.sinon.spy(this.collectionView, 'someViewCallback');
       this.sinon.spy(this.collectionView, 'destroy');
       this.sinon.spy(this.collectionView, 'onDestroy');
       this.sinon.spy(this.collectionView, 'onBeforeDestroy');
@@ -805,7 +805,7 @@ describe('collection view', function() {
     });
 
     it('should unbind all item-view events for the view', function() {
-      expect(this.collectionView.someItemViewCallback).not.to.have.been.called;
+      expect(this.collectionView.someViewCallback).not.to.have.been.called;
     });
 
     it('should not retain any references to its children', function() {
@@ -1049,7 +1049,10 @@ describe('collection view', function() {
       this.model = new Backbone.Model({foo: 'bar'});
       this.collection = new Backbone.Collection([this.model]);
 
-      this.collectionView = new this.CollectionView({
+      this.collectionView = new this.MockCollectionView({
+        childView: Backbone.Marionette.View.extend({
+          template: function() { return '<%= foo %>'; }
+        }),
         collection: this.collection
       });
     });
@@ -1236,14 +1239,14 @@ describe('collection view', function() {
 
   describe('when setting a childView in the constructor options', function() {
     beforeEach(function() {
-      var ChildView = this.ChildView.extend({
+      this.View = Marionette.View.extend({
         template: function() {},
-        MyItemView: true
+        MyView: true
       });
 
       this.collection = new Backbone.Collection([{a: 'b'}]);
-      this.collectionView = new this.CollectionView({
-        childView: ChildView,
+      this.collectionView = new Marionette.CollectionView({
+        childView: this.View,
         collection: this.collection
       });
 
@@ -1253,7 +1256,7 @@ describe('collection view', function() {
     });
 
     it('should use the specified childView for each item', function() {
-      expect(this.itemView.MyItemView).to.be.true;
+      expect(this.itemView.MyView).to.be.true;
     });
   });
 
@@ -1389,7 +1392,7 @@ describe('collection view', function() {
     beforeEach(function() {
       suite = this;
 
-      var ChildView = this.ChildView.extend({
+      this.View = Marionette.View.extend({
         template: _.template('<div>hi mom</div>'),
         constructor: function() {
           suite.ChildView.prototype.constructor.apply(this, arguments);
@@ -1400,6 +1403,11 @@ describe('collection view', function() {
         }
       });
 
+      this.CollectionView = Marionette.CollectionView.extend({
+        childView: this.View
+      });
+
+      this.isBuffering = null;
       this.collection = new Backbone.Collection([{}]);
       this.collectionView = new this.CollectionView({
         childView: ChildView,
@@ -1415,8 +1423,9 @@ describe('collection view', function() {
 
     describe('when collectionView is shown', function() {
       beforeEach(function() {
-        suite.isBufferingOnChildShow = undefined;
-        this.collectionView.trigger('show');
+        var suite = this;
+        this.showCalled = false;
+        this.View.prototype.onShow = function() { suite.showCalled = true; };
       });
 
       it('collectionView should not be buffering on childView show', function() {
