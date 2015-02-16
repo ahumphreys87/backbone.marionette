@@ -89,6 +89,8 @@ Marionette.Region = Marionette.Object.extend({
       // we can not reuse it.
       view.once('destroy', this.empty, this);
 
+      this.renderView(view, options);
+
       // make this region the view's parent,
       // It's important that this parent binding happens before rendering
       // so that any events the child may trigger during render can also be
@@ -144,6 +146,10 @@ Marionette.Region = Marionette.Object.extend({
     }
 
     return this;
+  },
+
+  renderView: function(view, options) {
+    view.render();
   },
 
   triggerBeforeAttach: true,

@@ -316,11 +316,18 @@ myRegion.triggerBeforeAttach = false;
 myRegion.show(myView, {triggerBeforeAttach: true});
 ```
 
-Or you can leave the events on by default but disable them for a single show.
+#### `renderView`
+
+In order to add conditional logic when rendering a view you can override the `renderView` method. This could be useful if you don't want the region to re-render views that aren't destroyed. By default this method will call `view.render`.
 
 ```js
-// This region will trigger attach events by default but not for this particular show.
-myRegion.show(myView, {triggerBeforeAttach: false, triggerAttach: false});
+
+var CachingRegion = Marionette.Region.extend({
+  shouldDestroyView(view, options) { return false; },
+  renderView(view, options) {
+    if (!view.isRendered) { view.render(); }
+  }
+});
 ```
 
 ### Checking whether a region is showing a view

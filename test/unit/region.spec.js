@@ -103,9 +103,9 @@ describe('region', function() {
         });
 
         it('should not render the view', function() {
-          sinon.spy(this.myView, 'render');
+          this.sinon.spy(this.myRegion, 'renderView');
           this.myRegion.show(this.myView);
-          expect(this.myView.render).not.to.have.been.called;
+          expect(this.myRegion.renderView).not.to.have.been.called;
         });
       });
     });
@@ -566,6 +566,7 @@ describe('region', function() {
 
       this.sinon.spy(this.view, 'destroy');
       this.sinon.spy(this.myRegion, 'attachHtml');
+      this.sinon.spy(this.myRegion, 'renderView');
       this.sinon.spy(this.view, 'render');
       this.myRegion.show(this.view);
     });
@@ -578,8 +579,8 @@ describe('region', function() {
       expect(this.myRegion.attachHtml).not.to.have.been.calledWith(this.view);
     });
 
-    it('should not call "render" on the view', function() {
-      expect(this.view.render).not.to.have.been.called;
+    it('should not call "renderView"', function() {
+      expect(this.myRegion.renderView).not.to.have.been.called;
     });
   });
 
@@ -606,6 +607,7 @@ describe('region', function() {
 
       this.sinon.spy(this.view, 'destroy');
       this.sinon.spy(this.myRegion, 'attachHtml');
+      this.sinon.spy(this.myRegion, 'renderView');
       this.sinon.spy(this.view, 'render');
       this.myRegion.show(this.view, {forceShow: true});
     });
@@ -618,8 +620,8 @@ describe('region', function() {
       expect(this.myRegion.attachHtml).to.have.been.calledWith(this.view);
     });
 
-    it('should call "render" on the view', function() {
-      expect(this.view.render).to.have.been.called;
+    it('should call "renderView"', function() {
+      expect(this.myRegion.renderView).to.have.been.calledOnce.and.calledWith(this.view, {forceShow: true});
     });
   });
 
@@ -885,10 +887,12 @@ describe('region', function() {
         el: '#foo',
         currentView: this.view
       });
+
+      this.sinon.spy(this.region, 'renderView');
     });
 
     it('should not render the view', function() {
-      expect(this.view.render).not.to.have.been.called;
+      expect(this.region.renderView).not.to.have.been.called;
     });
 
     it('should not `show` the view', function() {
@@ -922,16 +926,13 @@ describe('region', function() {
         }
       });
 
-      this.fooView = new this.LayoutView();
-
-      this.barRegion = this.fooView.getRegion('barRegion');
-      this.sinon.spy(this.barRegion, 'attachView');
-      this.sinon.spy(this.fooView.childEvents, 'attachViewClicked');
-      this.fooView.getRegion('barRegion').attachView(this.viewAttached);
+      this.sinon.spy(this.region, 'renderView');
+      this.sinon.spy(this.region, 'attachView');
+      this.region.attachView(this.view);
     });
 
     it('should not render the view', function() {
-      expect(this.viewAttached.render).not.to.have.been.called;
+      expect(this.region.renderView).not.to.have.been.called;
     });
 
     it('should not `show` the view', function() {
@@ -1119,47 +1120,24 @@ describe('region', function() {
     });
   });
 
-  describe('when showing a Backbone.View child view', function() {
+  describe('when calling "renderView"', function() {
     beforeEach(function() {
-      var BbView = Backbone.View.extend({
-        onBeforeRender: this.sinon.stub(),
-        onRender: this.sinon.stub(),
-        onBeforeDestroy: this.sinon.stub(),
-        onDestroy: this.sinon.stub()
+      this.region = new Backbone.Marionette.Region({
+        el: '#region'
       });
-      this.region = new Marionette.Region({
-        el: $('<div></div>')
+
+      this.View = Backbone.Marionette.View.extend({
+        template: _.template('')
       });
-      this.view = new BbView();
-      this.region.show(this.view);
+
+      this.view = new this.View();
+      this.sinon.spy(this.view, 'render');
+
+      this.region.renderView(this.view);
     });
 
-    it('should fire before:render and render on the child view on show', function() {
-      expect(this.view.onBeforeRender)
-        .to.have.been.calledOnce
-        .and.to.have.been.calledOn(this.view)
-        .and.to.have.been.calledWith(this.view);
-      expect(this.view.onRender)
-        .to.have.been.calledOnce
-        .and.to.have.been.calledOn(this.view)
-        .and.to.have.been.calledWith(this.view);
-    });
-
-    describe('when emptying while containing the Backbone.View', function() {
-      beforeEach(function() {
-        this.region.empty();
-      });
-
-      it('should fire before:destroy and destroy on the child view on show', function() {
-        expect(this.view.onBeforeDestroy)
-          .to.have.been.calledOnce
-          .and.to.have.been.calledOn(this.view)
-          .and.to.have.been.calledWith(this.view);
-        expect(this.view.onDestroy)
-          .to.have.been.calledOnce
-          .and.to.have.been.calledOn(this.view)
-          .and.to.have.been.calledWith(this.view);
-      });
+    it('should call "render" on the view', function() {
+      expect(this.view.render).to.have.been.calledOnce;
     });
   });
 });
