@@ -473,4 +473,27 @@ describe('collection/composite view sorting', function() {
     describeSpec({ onPrototype: true });
     describeSpec({ onPrototype: true, viewComparator: true });
   });
+  
+  describe('when sorting a CompositeView without a childViewContainer', function() {
+    beforeEach(function() {
+      this.compositeView = new this.CompositeView({
+        childView: this.ChildView,
+        collection: this.collection,
+        template: _.template('<p>Hello</p>')
+      });
+
+      this.compositeView.render();
+
+      this.model = new Backbone.Model({foo: '0', bar: '5'});
+      this.collection.add(this.model);
+
+      this.collection.comparator = 'foo';
+      this.collection.sort();
+    });
+
+    it('should still render the markup of the template', function() {
+      expect(this.compositeView.$el).to.have.$text('Hello0123');
+    });
+  });
+
 });
