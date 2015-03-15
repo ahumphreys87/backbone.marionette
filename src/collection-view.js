@@ -174,15 +174,10 @@ Marionette.CollectionView = Marionette.View.extend({
       this.render();
     } else {
       // get the DOM nodes in the same order as the models
-      var elsToReorder = _.map(models, function(model, index) {
+      var els = _.map(models, function(model, index) {
         var view = children.findByModel(model);
         view._index = index;
         return view.el;
-      });
-
-      // find the views that were children before but arent in this new ordering
-      var filteredOutViews = children.filter(function(view) {
-        return !_.contains(elsToReorder, view.el);
       });
 
       this.triggerMethod('before:reorder');
