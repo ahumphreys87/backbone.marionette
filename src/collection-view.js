@@ -65,12 +65,7 @@ Marionette.CollectionView = Marionette.View.extend({
 
     this.attachBuffer(this, this._createBuffer());
 
-    if (canTriggerAttach && this._triggerAttach) {
-      nestedViews = this._getNestedViews();
-      this._triggerMethodMany(nestedViews, this, 'attach');
-    }
-    if (this._isShown) {
-      this._triggerMethodMany(this._bufferedChildren, this, 'show');
+      this.initRenderBuffer();
     }
     this.initRenderBuffer();
   },
