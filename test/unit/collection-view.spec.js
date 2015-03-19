@@ -13,8 +13,18 @@ describe('collection view', function() {
       }
     });
 
-    this.MnChildView = Marionette.View.extend({
+    var spec = this;
+
+    this.ChildView = Backbone.Marionette.ItemView.extend({
       tagName: 'span',
+      // Stub methods in contructor to ensure calls are counted from the moment the parent
+      // CollectionView instantiates it.
+      constructor: function(options) {
+        Marionette.ItemView.prototype.constructor.call(this, options);
+        this.onBeforeShow = spec.sinon.stub();
+        this.onShow = spec.sinon.stub();
+        this.onDomRefresh = spec.sinon.stub();
+      },
       render: function() {
         this.trigger('before:render', this);
         this.$el.html(this.model.get('foo'));
@@ -27,7 +37,14 @@ describe('collection view', function() {
       // The ItemView's destroy method tries to destroy the
       // RegionManager, which, from the above, does not exist.
       destroy: Marionette.AbstractView.prototype.destroy,
-      onRender: function() {}
+      onRender: function() {},
+      onBeforeShow: function() {},
+      onShow: function() {},
+      onDomRefresh: function() {},
+    });
+
+    this.CollectionView = Backbone.Marionette.CollectionView.extend({
+      childView: this.ChildView
     });
 
     this.MockCollectionView = Backbone.Marionette.CollectionView.extend({
@@ -1098,37 +1115,26 @@ describe('collection view', function() {
 
   describe('when a collection view is initially attached to the DOM and shown', function() {
     beforeEach(function() {
-      var spec = this;
-      var ChildView = this.ChildView.extend({
-        constructor: function() {
-          ChildView.__super__.constructor.apply(this, arguments);
-          spec.sinon.stub(this, 'onRender');
-          spec.sinon.stub(this, 'onBeforeShow');
-          spec.sinon.stub(this, 'onShow');
-          spec.sinon.stub(this, 'onBeforeAttach');
-          spec.sinon.stub(this, 'onAttach');
-          spec.sinon.stub(this, 'onDomRefresh');
-        },
-        onRender: function() {},
-        onBeforeShow: function() {},
-        onShow: function() {},
-        onBeforeAttach: function() {},
-        onAttach: function() {},
-        onDomRefresh: function() {}
-      });
+      this.setFixtures($('<div id="fixture-container"></div>'));
 
-      this.collection = new Backbone.Collection([{foo: 1}, {foo: 2}]);
+      this.model1 = new Backbone.Model({foo: 1});
+      this.model2 = new Backbone.Model({foo: 2});
+      this.collection = new Backbone.Collection([this.model1]);
       this.collectionView = new this.CollectionView({
         childView: ChildView,
         collection: this.collection,
         emptyView: ChildView
       });
+      $('#fixture-container').append(this.collectionView.el);
+
+      this.collectionView.render();
+      this.collectionView.trigger('show');
 
       this.setFixtures($('<div id="fixture-container"></div>'));
       var region = new Marionette.Region({el: '#fixture-container'});
       region.show(this.collectionView);
 
-      this.childView1 = this.collectionView.children.findByIndex(0);
+      this.collection.add(this.model2);
       this.childView2 = this.collectionView.children.findByIndex(1);
     });
 
@@ -1143,85 +1149,26 @@ describe('collection view', function() {
         .and.to.have.been.calledWith(this.childView2);
     });
 
-    it('onShow should propagate to each initial child view', function() {
-      expect(this.childView1.onShow)
-        .to.have.been.calledOnce
-        .and.to.have.been.calledOn(this.childView1)
-        .and.to.have.been.calledWith(this.childView1);
-      expect(this.childView2.onShow)
-        .to.have.been.calledOnce
-        .and.to.have.been.calledOn(this.childView2)
-        .and.to.have.been.calledWith(this.childView2);
+    it('should call onBeforeShow of the added child view', function() {
+      expect(this.childView2.onBeforeShow).to.have.been.calledOnce;
+      expect(this.childView2.onBeforeShow).to.have.been.calledOn(this.childView2);
+      expect(this.childView2.onBeforeShow).to.have.been.calledWith(this.childView2);
     });
 
-    it('should call Region#show-like events on the initial child views in proper order', function() {
-      expect(this.childView1.onRender).to.have.been.calledBefore(this.childView1.onBeforeShow);
-      expect(this.childView1.onBeforeShow).to.have.been.calledBefore(this.childView1.onBeforeAttach);
-      expect(this.childView1.onBeforeAttach).to.have.been.calledBefore(this.childView1.onAttach);
-      expect(this.childView1.onAttach).to.have.been.calledBefore(this.childView1.onShow);
-      expect(this.childView1.onShow).to.have.been.called;
+    it('should call onShow of the added child view', function() {
+      expect(this.childView2.onShow).to.have.been.calledOnce;
+      expect(this.childView2.onShow).to.have.been.calledOn(this.childView2);
+      expect(this.childView2.onShow).to.have.been.calledWith(this.childView2);
     });
 
-    describe('when collection view is emptied', function() {
-      beforeEach(function() {
-        this.collection.reset();
-        this.emptyView = this.collectionView.children.findByIndex(0);
-      });
-
-      it('should call Region#show-like events on the empty view in proper order', function() {
-        expect(this.emptyView.onRender).to.have.been.calledBefore(this.emptyView.onBeforeShow);
-        expect(this.emptyView.onBeforeShow).to.have.been.calledBefore(this.emptyView.onBeforeAttach);
-        expect(this.emptyView.onBeforeAttach).to.have.been.calledBefore(this.emptyView.onAttach);
-        expect(this.emptyView.onAttach).to.have.been.calledBefore(this.emptyView.onShow);
-        expect(this.emptyView.onShow).to.have.been.called;
-      });
+    it('should call onDomRefresh of the added child view', function() {
+      expect(this.childView2.onDomRefresh).to.have.been.calledOnce;
+      expect(this.childView2.onDomRefresh).to.have.been.calledOn(this.childView2);
+      expect(this.childView2.onDomRefresh).to.have.been.calledWithExactly(); // no args
     });
 
-    describe('when a child view is added to a collection view, after the collection view has been shown', function() {
-      beforeEach(function() {
-        this.sinon.spy(this.collectionView, 'attachBuffer');
-        this.sinon.spy(this.collectionView, 'getChildView');
-        this.model3 = new Backbone.Model({foo: 3});
-        this.collection.add(this.model3);
-        this.childView3 = this.collectionView.children.findByIndex(2);
-      });
-
-      it('should not use the render buffer', function() {
-        expect(this.collectionView.attachBuffer).not.to.have.been.called;
-      });
-
-      it('should call onBeforeShow of the added child view', function() {
-        expect(this.childView3.onBeforeShow)
-          .to.have.been.calledOnce
-          .and.to.have.been.calledOn(this.childView3)
-          .and.to.have.been.calledWith(this.childView3);
-      });
-
-      it('should call onShow of the added child view', function() {
-        expect(this.childView3.onShow)
-          .to.have.been.calledOnce
-          .and.to.have.been.calledOn(this.childView3)
-          .and.to.have.been.calledWith(this.childView3);
-      });
-
-      it('should call onDomRefresh of the added child view', function() {
-        expect(this.childView3.onDomRefresh)
-          .to.have.been.calledOnce
-          .and.to.have.been.calledOn(this.childView3)
-          .and.to.have.been.calledWith(this.childView3);
-      });
-
-      it('should call getChildView with the new model', function() {
-        expect(this.collectionView.getChildView).to.have.been.calledWith(this.model3);
-      });
-
-      it('should call Region#show-like events on the added child view in proper order', function() {
-        expect(this.childView3.onRender).to.have.been.calledBefore(this.childView3.onBeforeShow);
-        expect(this.childView3.onBeforeShow).to.have.been.calledBefore(this.childView3.onBeforeAttach);
-        expect(this.childView3.onBeforeAttach).to.have.been.calledBefore(this.childView3.onAttach);
-        expect(this.childView3.onAttach).to.have.been.calledBefore(this.childView3.onShow);
-        expect(this.childView3.onShow).to.have.been.called;
-      });
+    it('should call getChildView with the new model', function() {
+      expect(this.collectionView.getChildView).to.have.been.calledWith(this.model2);
     });
 
     describe('when the childView is added at an existing index', function() {
@@ -1503,6 +1450,40 @@ describe('collection view', function() {
 
     it('should return the child view for the model', function() {
       expect(this.childView.$el).to.contain.$text('bar');
+    });
+  });
+
+  describe('when a collection view has been rendered but not shown', function() {
+    beforeEach(function() {
+      this.collection = new Backbone.Collection([{foo: 1}, {foo: 2}]);
+      this.collectionView = new this.CollectionView({
+        collection: this.collection
+      });
+
+      this.collectionView.render();
+      this.collectionView.trigger('before:show');
+      this.collectionView.trigger('show');
+
+      this.childView1 = this.collectionView.children.findByIndex(0);
+      this.childView2 = this.collectionView.children.findByIndex(1);
+    });
+
+    it('onBeforeShow should propagate to each child view', function() {
+      expect(this.childView1.onBeforeShow).to.have.been.calledOnce;
+      expect(this.childView1.onBeforeShow).to.have.been.calledOn(this.childView1);
+      expect(this.childView1.onBeforeShow).to.have.been.calledWith(this.childView1);
+      expect(this.childView2.onBeforeShow).to.have.been.calledOnce;
+      expect(this.childView2.onBeforeShow).to.have.been.calledOn(this.childView2);
+      expect(this.childView2.onBeforeShow).to.have.been.calledWith(this.childView2);
+    });
+
+    it('onShow should propagate to each child view', function() {
+      expect(this.childView1.onShow).to.have.been.calledOnce;
+      expect(this.childView1.onShow).to.have.been.calledOn(this.childView1);
+      expect(this.childView1.onShow).to.have.been.calledWith(this.childView1);
+      expect(this.childView2.onShow).to.have.been.calledOnce;
+      expect(this.childView2.onShow).to.have.been.calledOn(this.childView2);
+      expect(this.childView2.onShow).to.have.been.calledWith(this.childView2);
     });
   });
 });
