@@ -5,7 +5,7 @@
 // Object borrows many conventions and utilities from Backbone.
 Marionette.Object = function(options) {
   this.options = _.extend({}, _.result(this, 'options'), options);
-
+  Marionette.proxyRadioHandlers.apply(this);
   this.initialize.apply(this, arguments);
 };
 
@@ -20,11 +20,10 @@ _.extend(Marionette.Object.prototype, Backbone.Events, {
   //this is a noop method intended to be overridden by classes that extend from this base
   initialize: function() {},
 
-  destroy: function(options) {
-    options = options || {};
-
-    this.triggerMethod('before:destroy', options);
-    this.triggerMethod('destroy', options);
+  destroy: function() {
+    this.triggerMethod('before:destroy');
+    this.triggerMethod('destroy');
+    Marionette.unproxyRadioHandlers.apply(this);
     this.stopListening();
 
     return this;
@@ -45,4 +44,5 @@ _.extend(Marionette.Object.prototype, Backbone.Events, {
 
   // Proxy `unbindEntityEvents` to enable unbinding view's events from another entity.
   unbindEntityEvents: Marionette.proxyUnbindEntityEvents
+
 });
