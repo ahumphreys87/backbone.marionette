@@ -24,30 +24,30 @@ describe('collection view', function() {
         this.onBeforeShow = spec.sinon.stub();
         this.onShow = spec.sinon.stub();
         this.onDomRefresh = spec.sinon.stub();
+        spec.sinon.spy(this, 'render');
       },
       render: function() {
         this.trigger('before:render', this);
         this.$el.html(this.model.get('foo'));
         this.trigger('render');
       },
-      // Init region manager creates a circular reference, which
-      // explodes Sinon's deep equals assertion. These tests
-      // do not care if the view has a region manager or not.
-      _initializeRegions: function() {},
-      // The View's destroy method tries to destroy the
-      // RegionManager, which, from the above, does not exist.
-      destroy: Marionette.AbstractView.prototype.destroy,
       onRender: function() {},
       onBeforeShow: function() {},
       onShow: function() {},
       onDomRefresh: function() {},
     });
 
-    this.CollectionView = Backbone.Marionette.CollectionView.extend({
-      childView: this.ChildView
+    this.DeepEqualChildView = this.ChildView.extend({
+      // Init region manager creates a circular reference, which explodes Sinon's deep equals
+      // assertion. Some tests do not care if the view has a region manager or not, but do care
+      // about deep equality.
+      _initializeRegions: function() {},
+      // The View's destroy method tries to destroy the RegionManager, which, from the above,
+      // does not exist.
+      destroy: Marionette.AbstractView.prototype.destroy
     });
 
-    this.MockCollectionView = Backbone.Marionette.CollectionView.extend({
+    this.CollectionView = Marionette.CollectionView.extend({
       childView: this.ChildView,
       onBeforeRender: function() {
         return this.isRendered;
@@ -62,6 +62,10 @@ describe('collection view', function() {
       onRenderCollection: function() {},
       onBeforeRenderCollection: function() {}
     });
+
+    this.DeepEqualCollectionView = this.CollectionView.extend({
+      childView: this.DeepEqualChildView,
+    });
   });
 
   // Collection View Specs
@@ -69,10 +73,9 @@ describe('collection view', function() {
 
   describe('before rendering a collection view', function() {
     beforeEach(function() {
-      var CollectionView = this.CollectionView.extend({
-        sort: function() { return 1; },
-        onAddChild: this.sinon.stub(),
-        onRemoveChild: this.sinon.stub()
+      this.collection = new Backbone.Collection([]);
+      this.CollectionView = this.DeepEqualCollectionView.extend({
+        sort: function() { return 1; }
       });
 
       this.collection = new Backbone.Collection([]);
@@ -138,8 +141,7 @@ describe('collection view', function() {
         onChildViewRender:        this.sinon.stub()
       });
 
-      this.collection = new Backbone.Collection([{foo: 'bar'}, {foo: 'baz'}]);
-      this.collectionView = new CollectionView({
+      this.collectionView = new this.DeepEqualCollectionView({
         collection: this.collection
       });
 
@@ -281,7 +283,7 @@ describe('collection view', function() {
       });
 
       var suite = this;
-      this.collectionView = new this.MockCollectionView({
+      this.collectionView = new this.DeepEqualCollectionView({
         collection: this.collection,
         childView: function(child) {
           return child.get('id') % 2 === 0 ? suite.EvenView : suite.OddView;
@@ -301,7 +303,7 @@ describe('collection view', function() {
     beforeEach(function() {
       this.collection = new Backbone.Collection([{id: 1, name: 'one'}, {id: 2, name: 'two'}]);
 
-      this.collectionView = new this.MockCollectionView({
+      this.collectionView = new this.DeepEqualCollectionView({
         collection: this.collection,
         childView: 'invalid childView'
       });
@@ -320,7 +322,8 @@ describe('collection view', function() {
       });
 
       this.collection = new Backbone.Collection([{foo: 'bar'}, {foo: 'baz'}]);
-      this.collectionView = new CollectionView({
+
+      this.collectionView = new this.DeepEqualCollectionView({
         collection: this.collection
       });
 
@@ -338,11 +341,7 @@ describe('collection view', function() {
 
   describe('when rendering a collection view without a collection', function() {
     beforeEach(function() {
-      var CollectionView = this.CollectionView.extend({
-        onRender:       this.sinon.stub(),
-        onBeforeRender: this.sinon.stub()
-      });
-      this.collectionView = new CollectionView();
+      this.collectionView = new this.DeepEqualCollectionView();
 
       this.sinon.spy(this.collectionView, 'trigger');
 
@@ -360,26 +359,18 @@ describe('collection view', function() {
 
   describe('when rendering a childView', function() {
     beforeEach(function() {
-      this.collection = new Backbone.Collection([{foo: 'bar'}]);
-      this.collectionView = new this.CollectionView({
+      this.collection = new Backbone.Collection();
+      this.model = new Backbone.Model({foo: 'bar'});
+      this.collectionView = new Marionette.CollectionView({
+        childView: this.ChildView,
         collection: this.collection
       });
-
       this.collectionView.render();
-
-      this.childView = this.collectionView.children.first();
-      this.sinon.spy(this.childView, 'render');
-
-      this.sinon.spy(this.collectionView, 'renderChildView');
-      this.collectionView.renderChildView(this.childView);
+      this.childView = this.collectionView.addChild(this.model, this.ChildView, 0);
     });
 
     it('should call "render" on the childView', function() {
       expect(this.childView.render).to.have.been.calledOnce;
-    });
-
-    it('should return the childView', function() {
-      expect(this.collectionView.renderChildView).to.have.returned(this.childView);
     });
   });
 
@@ -433,7 +424,8 @@ describe('collection view', function() {
   describe('when a model is added to the collection', function() {
     beforeEach(function() {
       this.collection = new Backbone.Collection();
-      this.collectionView = new this.CollectionView({
+      this.collectionView = new this.DeepEqualCollectionView({
+        childView: this.ChildView,
         collection: this.collection
       });
       this.collectionView.render();
@@ -468,7 +460,8 @@ describe('collection view', function() {
     beforeEach(function() {
       this.collection = new Backbone.Collection({foo: 'bar'});
 
-      this.collectionView = new this.CollectionView({
+      this.collectionView = new this.DeepEqualCollectionView({
+        childView: this.ChildView,
         collection: this.collection
       });
       this.collectionView.render();
@@ -694,7 +687,8 @@ describe('collection view', function() {
       this.collection = new Backbone.Collection();
       this.collection.add(this.model);
 
-      this.collectionView = new CollectionView({
+      this.collectionView = new this.DeepEqualCollectionView({
+        childView: this.ChildView,
         collection: this.collection
       });
       this.collectionView.render();
@@ -997,7 +991,7 @@ describe('collection view', function() {
       this.model = new Backbone.Model({foo: 'bar'});
       this.collection = new Backbone.Collection([this.model]);
 
-      this.collectionView = new this.CollectionView({collection: this.collection});
+      this.collectionView = new this.DeepEqualCollectionView({collection: this.collection});
       this.collectionView.on('childview:some:event', this.someEventSpy);
       this.collectionView.render();
 
@@ -1017,7 +1011,7 @@ describe('collection view', function() {
 
   describe('when configuring a custom childViewEventPrefix', function() {
     beforeEach(function() {
-      this.CollectionView = this.CollectionView.extend({
+      this.CollectionView = this.DeepEqualCollectionView.extend({
         childViewEventPrefix: 'myPrefix'
       });
 
@@ -1049,7 +1043,7 @@ describe('collection view', function() {
       this.model = new Backbone.Model({foo: 'bar'});
       this.collection = new Backbone.Collection([this.model]);
 
-      this.collectionView = new this.MockCollectionView({
+      this.collectionView = new this.DeepEqualCollectionView({
         childView: Backbone.Marionette.View.extend({
           template: function() { return '<%= foo %>'; }
         }),
@@ -1104,7 +1098,7 @@ describe('collection view', function() {
       this.model = new Backbone.Model({foo: 'bar'});
       this.collection = new Backbone.Collection([this.model]);
 
-      this.collectionView = new this.CollectionView({
+      this.collectionView = new this.DeepEqualCollectionView({
         template: '#itemTemplate',
         collection: this.collection
       });
@@ -1138,7 +1132,7 @@ describe('collection view', function() {
       this.model = new Backbone.Model({foo: 'bar'});
       this.collection = new Backbone.Collection([this.model]);
 
-      this.collectionView = new this.CollectionView({
+      this.collectionView = new this.DeepEqualCollectionView({
         template: '#itemTemplate',
         collection: this.collection
       });
@@ -1262,7 +1256,7 @@ describe('collection view', function() {
 
   describe('when calling childViewEvents via a childEvents method', function() {
     beforeEach(function() {
-      this.CollectionView = this.MockCollectionView.extend({
+      this.CollectionView = this.DeepEqualCollectionView.extend({
         childViewEvents: function() {
           return {
             'some:event': 'someEvent'
@@ -1297,7 +1291,7 @@ describe('collection view', function() {
     beforeEach(function() {
       this.onSomeEventSpy = this.sinon.stub();
 
-      this.CollectionView = this.MockCollectionView.extend({
+      this.CollectionView = this.DeepEqualCollectionView.extend({
         childViewEvents: {
           'some:event': this.onSomeEventSpy
         }
@@ -1325,7 +1319,7 @@ describe('collection view', function() {
 
   describe('when calling childViewEvents via the childEvents hash with a string of the function name', function() {
     beforeEach(function() {
-      this.CollectionView = this.MockCollectionView.extend({
+      this.CollectionView = this.DeepEqualCollectionView.extend({
         childViewEvents: {
           'some:event': 'someEvent'
         }

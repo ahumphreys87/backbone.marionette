@@ -21,34 +21,19 @@ describe('onAttach', function() {
       onBeforeAttach: function() {}
     });
 
-    this.BasicLayoutView = Marionette.LayoutView.extend({
-      template: _.template('<header></header><main></main><footer></footer>'),
-      regions: {
-        header: 'header',
-        main: 'main',
-        footer: 'footer'
-      },
-      constructor: function() {
-        Marionette.LayoutView.prototype.constructor.apply(this, arguments);
-        spec.sinon.spy(this, 'onBeforeAttach');
-        spec.sinon.spy(this, 'onAttach');
-      },
-      onAttach: function() {},
-      onBeforeAttach: function() {}
-    });
-
-    this.EmptyView = Backbone.View.extend({
+    var spec = this;
+    this.EmptyView = Marionette.View.extend({
       template: false,
       constructor: function(options) {
-        Backbone.View.prototype.constructor.call(this, options);
+        Marionette.View.prototype.constructor.call(this, options);
         this.onAttach = spec.sinon.stub();
         this.onBeforeAttach = spec.sinon.stub();
       }
     });
-    this.ChildView = Backbone.View.extend({
+    this.ChildView = Marionette.View.extend({
       template: false,
       constructor: function(options) {
-        Backbone.View.prototype.constructor.call(this, options);
+        Marionette.View.prototype.constructor.call(this, options);
         this.onAttach = spec.sinon.stub();
         this.onBeforeAttach = spec.sinon.stub();
       }
@@ -804,14 +789,12 @@ describe('onAttach', function() {
 
     it('should trigger onBeforeAttach and onAttach on the emptyView a single time', function() {
       expect(this.childView).to.be.an.instanceof(this.EmptyView);
-      expect(this.childView.onBeforeAttach)
-        .and.to.have.been.calledOnce
-        .and.to.have.been.calledOn(this.childView)
-        .and.to.have.been.calledWith(this.childView);
-      expect(this.childView.onAttach)
-        .and.to.have.been.calledOnce
-        .and.to.have.been.calledOn(this.childView)
-        .and.to.have.been.calledWith(this.childView);
+      expect(this.childView.onBeforeAttach).to.have.been.calledOnce;
+      expect(this.childView.onBeforeAttach).to.have.been.calledOn(this.childView);
+      expect(this.childView.onBeforeAttach).to.have.been.calledWith(this.childView);
+      expect(this.childView.onAttach).to.have.been.calledOnce;
+      expect(this.childView.onAttach).to.have.been.calledOn(this.childView);
+      expect(this.childView.onAttach).to.have.been.calledWith(this.childView);
     });
 
     describe('when adding a new element to the collection', function() {
@@ -821,14 +804,12 @@ describe('onAttach', function() {
       });
       it('should trigger onBeforeAttach and onAttach on the childView a single time', function() {
         expect(this.childView).to.be.an.instanceof(this.ChildView);
-        expect(this.childView.onBeforeAttach)
-          .and.to.have.been.calledOnce
-          .and.to.have.been.calledOn(this.childView)
-          .and.to.have.been.calledWith(this.childView);
-        expect(this.childView.onAttach)
-          .and.to.have.been.calledOnce
-          .and.to.have.been.calledOn(this.childView)
-          .and.to.have.been.calledWith(this.childView);
+        expect(this.childView.onBeforeAttach).to.have.been.calledOnce;
+        expect(this.childView.onBeforeAttach).to.have.been.calledOn(this.childView);
+        expect(this.childView.onBeforeAttach).to.have.been.calledWith(this.childView);
+        expect(this.childView.onAttach).to.have.been.calledOnce;
+        expect(this.childView.onAttach).to.have.been.calledOn(this.childView);
+        expect(this.childView.onAttach).to.have.been.calledWith(this.childView);
       });
     });
   });
@@ -847,14 +828,12 @@ describe('onAttach', function() {
 
     it('should not trigger onAttach or onBeforeAttach on the emptyView a single time', function() {
       expect(this.childView).to.be.an.instanceof(this.EmptyView);
-      expect(this.childView.onBeforeAttach)
-        .and.to.not.have.been.calledOnce
-        .and.to.not.have.been.calledOn(this.childView)
-        .and.to.not.have.been.calledWith(this.childView);
-      expect(this.childView.onAttach)
-        .and.to.not.have.been.calledOnce
-        .and.to.not.have.been.calledOn(this.childView)
-        .and.to.not.have.been.calledWith(this.childView);
+      expect(this.childView.onBeforeAttach).to.not.have.been.calledOnce;
+      expect(this.childView.onBeforeAttach).to.not.have.been.calledOn(this.childView);
+      expect(this.childView.onBeforeAttach).to.not.have.been.calledWith(this.childView);
+      expect(this.childView.onAttach).to.not.have.been.calledOnce;
+      expect(this.childView.onAttach).to.not.have.been.calledOn(this.childView);
+      expect(this.childView.onAttach).to.not.have.been.calledWith(this.childView);
     });
 
     describe('when adding a new element to the collection', function() {
@@ -864,14 +843,12 @@ describe('onAttach', function() {
       });
       it('should not trigger onBeforeAttach or onAttach on the childView a single time', function() {
         expect(this.childView).to.be.an.instanceof(this.ChildView);
-        expect(this.childView.onBeforeAttach)
-          .and.to.not.have.been.calledOnce
-          .and.to.not.have.been.calledOn(this.childView)
-          .and.to.not.have.been.calledWith(this.childView);
-        expect(this.childView.onAttach)
-          .and.to.not.have.been.calledOnce
-          .and.to.not.have.been.calledOn(this.childView)
-          .and.to.not.have.been.calledWith(this.childView);
+        expect(this.childView.onBeforeAttach).to.not.have.been.calledOnce;
+        expect(this.childView.onBeforeAttach).to.not.have.been.calledOn(this.childView);
+        expect(this.childView.onBeforeAttach).to.not.have.been.calledWith(this.childView);
+        expect(this.childView.onAttach).to.not.have.been.calledOnce;
+        expect(this.childView.onAttach).to.not.have.been.calledOn(this.childView);
+        expect(this.childView.onAttach).to.not.have.been.calledWith(this.childView);
       });
     });
   });
@@ -888,22 +865,18 @@ describe('onAttach', function() {
     });
 
     it('should trigger onBeforeAttach and onAttach on each of its childViews a single time', function() {
-      expect(this.childView1.onBeforeAttach)
-        .and.to.have.been.calledOnce
-        .and.to.have.been.calledOn(this.childView1)
-        .and.to.have.been.calledWith(this.childView1);
-      expect(this.childView1.onAttach)
-        .and.to.have.been.calledOnce
-        .and.to.have.been.calledOn(this.childView1)
-        .and.to.have.been.calledWith(this.childView1);
-      expect(this.childView2.onBeforeAttach)
-        .and.to.have.been.calledOnce
-        .and.to.have.been.calledOn(this.childView2)
-        .and.to.have.been.calledWith(this.childView2);
-      expect(this.childView2.onAttach)
-        .and.to.have.been.calledOnce
-        .and.to.have.been.calledOn(this.childView2)
-        .and.to.have.been.calledWith(this.childView2);
+      expect(this.childView1.onBeforeAttach).to.have.been.calledOnce;
+      expect(this.childView1.onBeforeAttach).to.have.been.calledOn(this.childView1);
+      expect(this.childView1.onBeforeAttach).to.have.been.calledWith(this.childView1);
+      expect(this.childView1.onAttach).to.have.been.calledOnce;
+      expect(this.childView1.onAttach).to.have.been.calledOn(this.childView1);
+      expect(this.childView1.onAttach).to.have.been.calledWith(this.childView1);
+      expect(this.childView2.onBeforeAttach).to.have.been.calledOnce;
+      expect(this.childView2.onBeforeAttach).to.have.been.calledOn(this.childView2);
+      expect(this.childView2.onBeforeAttach).to.have.been.calledWith(this.childView2);
+      expect(this.childView2.onAttach).to.have.been.calledOnce;
+      expect(this.childView2.onAttach).to.have.been.calledOn(this.childView2);
+      expect(this.childView2.onAttach).to.have.been.calledWith(this.childView2);
     });
 
     describe('when re-rendering the CollectionView', function() {
@@ -912,22 +885,18 @@ describe('onAttach', function() {
       });
 
       it('should trigger onBeforeAttach and onAttach on each of its childViews a single time', function() {
-        expect(this.childView1.onBeforeAttach)
-          .and.to.have.been.calledOnce
-          .and.to.have.been.calledOn(this.childView1)
-          .and.to.have.been.calledWith(this.childView1);
-        expect(this.childView1.onAttach)
-          .and.to.have.been.calledOnce
-          .and.to.have.been.calledOn(this.childView1)
-          .and.to.have.been.calledWith(this.childView1);
-        expect(this.childView2.onBeforeAttach)
-          .and.to.have.been.calledOnce
-          .and.to.have.been.calledOn(this.childView2)
-          .and.to.have.been.calledWith(this.childView2);
-        expect(this.childView2.onAttach)
-          .and.to.have.been.calledOnce
-          .and.to.have.been.calledOn(this.childView2)
-          .and.to.have.been.calledWith(this.childView2);
+        expect(this.childView1.onBeforeAttach).to.have.been.calledOnce;
+        expect(this.childView1.onBeforeAttach).to.have.been.calledOn(this.childView1);
+        expect(this.childView1.onBeforeAttach).to.have.been.calledWith(this.childView1);
+        expect(this.childView1.onAttach).to.have.been.calledOnce;
+        expect(this.childView1.onAttach).to.have.been.calledOn(this.childView1);
+        expect(this.childView1.onAttach).to.have.been.calledWith(this.childView1);
+        expect(this.childView2.onBeforeAttach).to.have.been.calledOnce;
+        expect(this.childView2.onBeforeAttach).to.have.been.calledOn(this.childView2);
+        expect(this.childView2.onBeforeAttach).to.have.been.calledWith(this.childView2);
+        expect(this.childView2.onAttach).to.have.been.calledOnce;
+        expect(this.childView2.onAttach).to.have.been.calledOn(this.childView2);
+        expect(this.childView2.onAttach).to.have.been.calledWith(this.childView2);
       });
     });
 
@@ -938,14 +907,12 @@ describe('onAttach', function() {
       });
       it('should trigger onBeforeAttach and onAttach on the emptyView a single time', function() {
         expect(this.childView).to.be.an.instanceof(this.EmptyView);
-        expect(this.childView.onBeforeAttach)
-          .and.to.have.been.calledOnce
-          .and.to.have.been.calledOn(this.childView)
-          .and.to.have.been.calledWith(this.childView);
-        expect(this.childView.onAttach)
-          .and.to.have.been.calledOnce
-          .and.to.have.been.calledOn(this.childView)
-          .and.to.have.been.calledWith(this.childView);
+        expect(this.childView.onBeforeAttach).to.have.been.calledOnce;
+        expect(this.childView.onBeforeAttach).to.have.been.calledOn(this.childView);
+        expect(this.childView.onBeforeAttach).to.have.been.calledWith(this.childView);
+        expect(this.childView.onAttach).to.have.been.calledOnce;
+        expect(this.childView.onAttach).to.have.been.calledOn(this.childView);
+        expect(this.childView.onAttach).to.have.been.calledWith(this.childView);
       });
     });
   });
@@ -964,22 +931,18 @@ describe('onAttach', function() {
     });
 
     it('should not trigger onBeforeAttach or onAttach on each of its childViews a single time', function() {
-      expect(this.childView1.onBeforeAttach)
-        .and.to.not.have.been.calledOnce
-        .and.to.not.have.been.calledOn(this.childView1)
-        .and.to.not.have.been.calledWith(this.childView1);
-      expect(this.childView1.onAttach)
-        .and.to.not.have.been.calledOnce
-        .and.to.not.have.been.calledOn(this.childView1)
-        .and.to.not.have.been.calledWith(this.childView1);
-      expect(this.childView2.onBeforeAttach)
-        .and.to.not.have.been.calledOnce
-        .and.to.not.have.been.calledOn(this.childView2)
-        .and.to.not.have.been.calledWith(this.childView2);
-      expect(this.childView2.onAttach)
-        .and.to.not.have.been.calledOnce
-        .and.to.not.have.been.calledOn(this.childView2)
-        .and.to.not.have.been.calledWith(this.childView2);
+      expect(this.childView1.onBeforeAttach).to.not.have.been.calledOnce;
+      expect(this.childView1.onBeforeAttach).to.not.have.been.calledOn(this.childView1);
+      expect(this.childView1.onBeforeAttach).to.not.have.been.calledWith(this.childView1);
+      expect(this.childView1.onAttach).to.not.have.been.calledOnce;
+      expect(this.childView1.onAttach).to.not.have.been.calledOn(this.childView1);
+      expect(this.childView1.onAttach).to.not.have.been.calledWith(this.childView1);
+      expect(this.childView2.onBeforeAttach).to.not.have.been.calledOnce;
+      expect(this.childView2.onBeforeAttach).to.not.have.been.calledOn(this.childView2);
+      expect(this.childView2.onBeforeAttach).to.not.have.been.calledWith(this.childView2);
+      expect(this.childView2.onAttach).to.not.have.been.calledOnce;
+      expect(this.childView2.onAttach).to.not.have.been.calledOn(this.childView2);
+      expect(this.childView2.onAttach).to.not.have.been.calledWith(this.childView2);
     });
 
     describe('when re-rendering the CollectionView', function() {
@@ -988,22 +951,18 @@ describe('onAttach', function() {
       });
 
       it('should not trigger onBeforeAttach or onAttach on each of its childViews a single time', function() {
-        expect(this.childView1.onBeforeAttach)
-          .and.to.not.have.been.calledOnce
-          .and.to.not.have.been.calledOn(this.childView1)
-          .and.to.not.have.been.calledWith(this.childView1);
-        expect(this.childView1.onAttach)
-          .and.to.not.have.been.calledOnce
-          .and.to.not.have.been.calledOn(this.childView1)
-          .and.to.not.have.been.calledWith(this.childView1);
-        expect(this.childView2.onBeforeAttach)
-          .and.to.not.have.been.calledOnce
-          .and.to.not.have.been.calledOn(this.childView2)
-          .and.to.not.have.been.calledWith(this.childView2);
-        expect(this.childView2.onAttach)
-          .and.to.not.have.been.calledOnce
-          .and.to.not.have.been.calledOn(this.childView2)
-          .and.to.not.have.been.calledWith(this.childView2);
+        expect(this.childView1.onBeforeAttach).to.not.have.been.calledOnce;
+        expect(this.childView1.onBeforeAttach).to.not.have.been.calledOn(this.childView1);
+        expect(this.childView1.onBeforeAttach).to.not.have.been.calledWith(this.childView1);
+        expect(this.childView1.onAttach).to.not.have.been.calledOnce;
+        expect(this.childView1.onAttach).to.not.have.been.calledOn(this.childView1);
+        expect(this.childView1.onAttach).to.not.have.been.calledWith(this.childView1);
+        expect(this.childView2.onBeforeAttach).to.not.have.been.calledOnce;
+        expect(this.childView2.onBeforeAttach).to.not.have.been.calledOn(this.childView2);
+        expect(this.childView2.onBeforeAttach).to.not.have.been.calledWith(this.childView2);
+        expect(this.childView2.onAttach).to.not.have.been.calledOnce;
+        expect(this.childView2.onAttach).to.not.have.been.calledOn(this.childView2);
+        expect(this.childView2.onAttach).to.not.have.been.calledWith(this.childView2);
       });
     });
 
@@ -1014,14 +973,12 @@ describe('onAttach', function() {
       });
       it('should not trigger onBeforeAttach or onAttach on the emptyView a single time', function() {
         expect(this.childView).to.be.an.instanceof(this.EmptyView);
-        expect(this.childView.onBeforeAttach)
-          .and.to.not.have.been.calledOnce
-          .and.to.not.have.been.calledOn(this.childView)
-          .and.to.not.have.been.calledWith(this.childView);
-        expect(this.childView.onAttach)
-          .and.to.not.have.been.calledOnce
-          .and.to.not.have.been.calledOn(this.childView)
-          .and.to.not.have.been.calledWith(this.childView);
+        expect(this.childView.onBeforeAttach).to.not.have.been.calledOnce;
+        expect(this.childView.onBeforeAttach).to.not.have.been.calledOn(this.childView);
+        expect(this.childView.onBeforeAttach).to.not.have.been.calledWith(this.childView);
+        expect(this.childView.onAttach).to.not.have.been.calledOnce;
+        expect(this.childView.onAttach).to.not.have.been.calledOn(this.childView);
+        expect(this.childView.onAttach).to.not.have.been.calledWith(this.childView);
       });
     });
   });
