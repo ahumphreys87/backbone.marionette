@@ -228,36 +228,33 @@ Marionette.CollectionView = Marionette.AbstractView.extend({
     this.destroyEmptyView();
     this.destroyChildren({checkEmpty: false});
 
-    if (this.isEmpty(this.collection)) {
+    var models = this._filteredSortedModels();
+    if (this.isEmpty(this.collection, {processedModels: models})) {
       this.showEmptyView();
     } else {
       this.triggerMethod('before:render:collection', this);
       this.startBuffering();
-      this.showCollection();
+      this.showCollection(models);
       this.endBuffering();
       this.triggerMethod('render:collection', this);
-
-      // If we have shown children and none have passed the filter, show the empty view
-      if (this.children.isEmpty() && this.getOption('filter')) {
-        this.showEmptyView();
-      }
     }
   },
 
   // Internal method to loop through collection and show each child view.
-  showCollection: function() {
-    var ChildView;
-
-    var models = this._filteredSortedModels();
-
+  showCollection: function(models) {
     _.each(models, function(child, index) {
-      ChildView = this.getChildView(child);
+      var ChildView = this.getChildView(child);
       this.addChild(child, ChildView, index);
     }, this);
   },
 
   // Allow the collection to be sorted by a custom view comparator
-  _filteredSortedModels: function(addedAt) {
+  _filteredSortedModels: function() {
+    if (!this.collection) {
+      return [];
+    }
+
+    var models;
     var viewComparator = this.getViewComparator();
     var models = this.collection.models;
     addedAt = Math.min(Math.max(addedAt, 0), models.length - 1);
@@ -276,12 +273,18 @@ Marionette.CollectionView = Marionette.AbstractView.extend({
     }
 
     // Filter after sorting in case the filter uses the index
+    models = this._filterModels(models);
+
+    return models;
+  },
+
+  // Filter an array of models, if a filter exists
+  _filterModels: function(models) {
     if (this.getOption('filter')) {
       models = _.filter(models, function(model, index) {
         return this._shouldAddChild(model, index);
       }, this);
     }
-
     return models;
   },
 
@@ -542,8 +545,16 @@ Marionette.CollectionView = Marionette.AbstractView.extend({
   },
 
   // check if the collection is empty
-  isEmpty: function() {
-    return !this.collection || this.collection.length === 0;
+  // or optionally whether an array of pre-processed models is empty
+  isEmpty: function(collection, options) {
+    var models;
+    if (_.result(options, 'processedModels')) {
+      models = options.processedModels;
+    } else {
+      models = this.collection ? this.collection.models : [];
+      models = this._filterModels(models);
+    }
+    return models.length === 0;
   },
 
   // If empty, show the empty view
