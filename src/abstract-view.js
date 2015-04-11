@@ -15,8 +15,6 @@ Marionette.AbstractView = Backbone.View.extend({
   constructor: function(options) {
     this.render = _.bind(this.render, this);
 
-    options = Marionette._getValue(options, this);
-
     // this exposes view options to the view initializer
     // this is a backfill since backbone removed the assignment
     // of this.options
