@@ -30,9 +30,9 @@
   },
   "dependencies": {
     "marionettejs/backbone.babysitter": "*",
-    "marionettejs/backbone.wreqr": "*",
-    "jashkenas/backbone": "1.0.0 - 1.3.x",
-    "jashkenas/underscore": "1.4.4 - 1.8.3"
+    "marionettejs/backbone.radio": "*",
+    "jashkenas/backbone": "*",
+    "jashkenas/underscore": "*"
   },
   "scripts": [
     "lib/core/backbone.marionette.js"

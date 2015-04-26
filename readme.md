@@ -60,13 +60,14 @@ We're happy to discuss design patterns and learn how you're using Marionette.
 
 * Scalable: applications built in modules with event-driven architecture
 * Sensible defaults: Underscore templates are used for view rendering
-* Easily modifiable: works with the specific needs of your application
-* Reduce boilerplate: for all views, including specialized types
-* Create: application visuals at runtime with `Region` and `LayoutView` objects
-* Nested: views and layouts within visual regions
-* Built-in: memory management and zombie-killing for views, layoutViews and regions
-* Event-driven architecture: utilizing the `Backbone.Wreqr.EventAggregator`
-* Flexible: "as-needed" architecture allowing you to pick and choose what you need
+* Easily modifiable: make it work with your application's specific needs
+* Reduce boilerplate for views, with specialized view types
+* Build on a modular architecture with an `Application` and modules that attach to it
+* Compose your application's visuals at runtime, with the `Region` and `LayoutView` objects
+* Nested views and layouts within visual regions
+* Built-in memory management and zombie-killing in views, regions and layoutViews
+* Event-driven architecture with `Backbone.Radio`
+* Flexible, "as-needed" architecture allowing you to pick and choose what you need
 * And much, much more
 
 
@@ -119,10 +120,10 @@ You can read the annotations for all the details of how Marionette works and adv
 
 MarionetteJS currently works with the following libraries:
 
-* [jQuery](http://jquery.com) v1.8 - 2.4.7
-* [Underscore](http://underscorejs.org) v1.4.4 - 1.8.3
-* [Backbone](http://backbonejs.org) v1.0.0 - 1.2.1 are preferred.
-* [Backbone.Wreqr](https://github.com/marionettejs/backbone.wreqr) Comes automatically with the bundled build.
+* [jQuery](http://jquery.com) v1.8+
+* [Underscore](http://underscorejs.org) v1.4.4 - 1.6.0
+* [Backbone](http://backbonejs.org) v1.0.0 - 1.1.2 are preferred.
+* [Backbone.Radio](https://github.com/marionettejs/backbone.radio) Comes automatically with the bundled build.
 * [Backbone.BabySitter](https://github.com/marionettejs/backbone.babysitter) Comes automatically with the bundled build.
 
 Marionette has not been tested against any other versions of these
