@@ -60,7 +60,7 @@ describe('region', function() {
         el: '#not-existed-region'
       });
 
-      this.MyView = Backbone.Marionette.AbstractView.extend({
+      this.MyView = Backbone.View.extend({
         render: function() {
           $(this.el).html('some content');
         }
@@ -122,11 +122,13 @@ describe('region', function() {
         onSwapOut: function() {}
       });
 
-      this.MyView = Marionette.View.extend({
+      this.MyView = Backbone.View.extend({
         events: {
           'click': function() {}
         },
-        template: _.template('some content'),
+        render: function() {
+          $(this.el).html('some content');
+        },
         destroy: function() {},
         onBeforeShow: function() {},
         onShow: function() {
@@ -598,7 +600,7 @@ describe('region', function() {
         }
       });
 
-      this.SubView = Backbone.Marionette.View.extend({
+      this.SubView = Backbone.View.extend({
         render: function() {
           $(this.el).html('some content');
         },
@@ -1179,7 +1181,7 @@ describe('region', function() {
       this.region.on('before:empty', this.beforeEmptySpy);
       this.region.on('empty', this.emptySpy);
 
-      this.View = Backbone.Marionette.AbstractView.extend({
+      this.View = Backbone.Marionette.View.extend({
         template: _.template('')
       });
 
@@ -1223,6 +1225,50 @@ describe('region', function() {
     it('should throw an error', function() {
       var errorMessage = 'The view passed is undefined and therefore invalid. You must pass a view instance to show.';
       expect(this.insertUndefined).to.throw(errorMessage);
+    });
+  });
+
+  describe('when showing a Backbone.View child view', function() {
+    beforeEach(function() {
+      var BbView = Backbone.View.extend({
+        onBeforeRender: this.sinon.stub(),
+        onRender: this.sinon.stub(),
+        onBeforeDestroy: this.sinon.stub(),
+        onDestroy: this.sinon.stub()
+      });
+      this.region = new Marionette.Region({
+        el: $('<div></div>')
+      });
+      this.view = new BbView();
+      this.region.show(this.view);
+    });
+
+    it('should fire before:render and render on the child view on show', function() {
+      expect(this.view.onBeforeRender)
+        .to.have.been.calledOnce
+        .and.to.have.been.calledOn(this.view)
+        .and.to.have.been.calledWith(this.view);
+      expect(this.view.onRender)
+        .to.have.been.calledOnce
+        .and.to.have.been.calledOn(this.view)
+        .and.to.have.been.calledWith(this.view);
+    });
+
+    describe('when emptying while containing the Backbone.View', function() {
+      beforeEach(function() {
+        this.region.empty();
+      });
+
+      it('should fire before:destroy and destroy on the child view on show', function() {
+        expect(this.view.onBeforeDestroy)
+          .to.have.been.calledOnce
+          .and.to.have.been.calledOn(this.view)
+          .and.to.have.been.calledWith(this.view);
+        expect(this.view.onDestroy)
+          .to.have.been.calledOnce
+          .and.to.have.been.calledOn(this.view)
+          .and.to.have.been.calledWith(this.view);
+      });
     });
   });
 

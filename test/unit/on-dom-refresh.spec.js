@@ -2,9 +2,15 @@ describe('onDomRefresh', function() {
   'use strict';
 
   beforeEach(function() {
-    this.onDomRefreshStub = this.sinon.stub();
-    this.View = Backbone.Marionette.View.extend({
-      onDomRefresh: this.onDomRefreshStub
+    this.setFixtures($('<div id="region"></div>'));
+    this.attachedRegion = new Marionette.Region({el: '#region'});
+    this.detachedRegion = new Marionette.Region({el: $('<div></div>')});
+    this.BbView = Backbone.View.extend({
+      onDomRefresh: this.sinon.stub()
+    });
+    this.MnView = Marionette.View.extend({
+      template: false,
+      onDomRefresh: this.sinon.stub()
     });
   });
 

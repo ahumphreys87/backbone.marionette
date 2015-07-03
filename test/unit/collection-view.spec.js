@@ -6,7 +6,14 @@ describe('collection view', function() {
 
     // Shared View Definitions
     // -----------------------
-    this.ChildView = Marionette.View.extend({
+    this.ChildView = Backbone.View.extend({
+      tagName: 'span',
+      render: function() {
+        this.$el.html(this.model.get('foo'));
+      }
+    });
+
+    this.MnChildView = Marionette.View.extend({
       tagName: 'span',
       render: function() {
         this.trigger('before:render', this);
@@ -557,6 +564,7 @@ describe('collection view', function() {
   describe('when a model is removed from the collection', function() {
     beforeEach(function() {
       var CollectionView = this.CollectionView.extend({
+        childView: this.MnChildView,
         onBeforeRemoveChild: this.sinon.stub(),
         onRemoveChild: this.sinon.stub()
       });
@@ -609,6 +617,7 @@ describe('collection view', function() {
   describe('when destroying a collection view', function() {
     beforeEach(function() {
       this.EventedView = this.CollectionView.extend({
+        childView: this.MnChildView,
         someCallback: function() {},
         onBeforeDestroy: function() {
           return {
@@ -1115,7 +1124,7 @@ describe('collection view', function() {
         expect(this.childView3.onDomRefresh)
           .to.have.been.calledOnce
           .and.to.have.been.calledOn(this.childView3)
-          .and.to.have.been.calledWithExactly(); // no args
+          .and.to.have.been.calledWith(this.childView3);
       });
 
       it('should call addChild with the new model', function() {
@@ -1278,14 +1287,13 @@ describe('collection view', function() {
     });
   });
 
-  describe('has a valid inheritance chain back to Marionette.AbstractView', function() {
+  describe('has a valid inheritance chain back to Backbone.View', function() {
     beforeEach(function() {
-      this.constructor = this.sinon.spy(Marionette.AbstractView.prototype, 'constructor');
-      this.collectionView = new this.CollectionView();
+      this.collectionView = new this.ChildView();
     });
 
-    it('calls the parent Marionette.AbstractView constructor function on instantiation', function() {
-      expect(this.constructor).to.have.been.called;
+    it('calls the parent Backbone.View constructor function on instantiation', function() {
+      expect(Backbone.View).to.have.been.called;
     });
   });
 

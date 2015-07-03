@@ -6,7 +6,6 @@
 // re-rendered.
 
 Marionette.MonitorDOMRefresh = function(view) {
-  if (view._isDomRefreshMonitored) { return; }
   view._isDomRefreshMonitored = true;
 
   // track when the view has been shown in the DOM,
