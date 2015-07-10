@@ -131,7 +131,7 @@ module.exports = function(grunt) {
         },
         src: [
           'test/unit/setup/helpers.js',
-          'test/unit/*.spec.js'
+          'test/unit/**/*.spec.js'
         ]
       }
     },
