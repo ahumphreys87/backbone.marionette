@@ -264,7 +264,6 @@ Marionette.AbstractView = Backbone.View.extend({
   // Internal method to create an event handler for a given `triggerDef` like
   // 'click:foo'
   _buildViewTrigger: function(triggerDef) {
-
     var options = _.defaults({}, triggerDef, {
       preventDefault: true,
       stopPropagation: true
