@@ -345,7 +345,7 @@ Marionette.AbstractView = Backbone.View.extend({
     childEvents = Marionette._getValue(childEvents, layoutView);
     var normalizedChildEvents = layoutView.normalizeMethods(childEvents);
 
-    if (normalizedChildEvents && _.isFunction(normalizedChildEvents[eventName])) {
+    if (!!normalizedChildEvents && _.isFunction(normalizedChildEvents[eventName])) {
       normalizedChildEvents[eventName].apply(layoutView, callArgs);
     }
   },
