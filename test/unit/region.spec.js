@@ -1025,19 +1025,19 @@ describe('region', function() {
     beforeEach(function() {
       this.setFixtures('<div id="foo">bar<div id="bar"><div id="baz"></div></div></div>');
 
-      this.ItemView = Backbone.Marionette.ItemView.extend({
+      var ChildView = Marionette.View.extend({
         onShow: function() {},
         triggers: {
           'click': 'attachViewClicked'
         }
       });
 
-      this.viewAttached = new this.ItemView({el: '#baz'});
+      this.viewAttached = new ChildView({el: '#baz'});
 
       this.sinon.spy(this.viewAttached, 'render');
       this.sinon.spy(this.viewAttached, 'onShow');
 
-      this.LayoutView = Backbone.Marionette.LayoutView.extend({
+      var View = Marionette.View.extend({
         el: '#foo',
         regions: {
           barRegion: '#bar'
@@ -1047,13 +1047,15 @@ describe('region', function() {
         }
       });
 
-      this.sinon.spy(this.region, 'renderView');
-      this.sinon.spy(this.region, 'attachView');
-      this.region.attachView(this.view);
+      this.fooView = new View();
+      this.barRegion = this.fooView.getRegion('barRegion');
+      this.sinon.spy(this.barRegion, 'attachView');
+      this.sinon.spy(this.fooView.childEvents, 'attachViewClicked');
+      this.fooView.getRegion('barRegion').attachView(this.viewAttached);
     });
 
     it('should not render the view', function() {
-      expect(this.region.renderView).not.to.have.been.called;
+      expect(this.viewAttached.render).not.to.have.been.called;
     });
 
     it('should not `show` the view', function() {
@@ -1068,26 +1070,9 @@ describe('region', function() {
       expect(this.barRegion.attachView).to.have.returned(this.fooView.barRegion);
     });
 
-    it('should call the child events defined on parent view', function() {
+    it('calls the child events defined on parent view', function() {
       this.viewAttached.$el.click();
-      expect(this.fooView.childEvents.attachViewClicked).to.have.been.calledOnce;
-    });
-
-    describe('when attaching another view to the same region', function() {
-      beforeEach(function() {
-        this.viewAttachedLater = new this.ItemView({el: '#baz'});
-        this.fooView.getRegion('barRegion').attachView(this.viewAttachedLater);
-      });
-
-      it('the first view should no longer call the child events defined on the parent', function() {
-        this.viewAttached.triggerMethod('attachViewClicked');
-        expect(this.fooView.childEvents.attachViewClicked).to.not.have.been.called;
-      });
-
-      it('the new view should call the child events defined on the parent instead', function() {
-        this.viewAttachedLater.triggerMethod('attachViewClicked');
-        expect(this.fooView.childEvents.attachViewClicked).to.have.been.calledOnce;
-      });
+      expect(this.fooView.childEvents.attachViewClicked).to.have.been.called;
     });
   });
 
