@@ -62,7 +62,7 @@ var manager = new Marionette.RegionManager({
   }
 });
 
-manager.get('aRegion').show(new MyView, options);
+mananger.get('aRegion').show(new MyView, options);
 ```
 
 ## RegionManager.addRegion

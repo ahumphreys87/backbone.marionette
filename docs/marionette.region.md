@@ -235,14 +235,13 @@ and `empty` methods to display and shut-down a view:
 var myView = new MyView();
 
 // render and display the view
-MyApp.getRegion('mainRegion').show(myView, options);
-
+MyApp.mainRegion.show(myView, options);
 
 // empties the current view
 MyApp.getRegion('mainRegion').empty();
 ```
 
-The `options` object is optional. If provided, it will be passed to the [events raised during `show`](#events-raised-on-the-region-during-show) (except for `before:empty` and `empty`). Special properties that change the behavior of `show` include `preventDestroy` and `forceShow`.
+The `options` object is optional. If provided, it will be passed to the [events raised during `show`](#events-raised-during-show) (except for `before:empty` and `empty`). Special properties that change the behavior of `show` include `preventDestroy` and `forceShow`.
 
 #### preventDestroy
 
@@ -530,7 +529,7 @@ MyApp.getRegion('mainRegion').on("swapOut", function(view, region, options){
   // you also have access to the `options` that were passed to the Region.show call
 });
 
-MyApp.getRegion('mainRegion').on("empty", function(view, region){
+MyApp.mainRegion.on("empty", function(view, region){
   // manipulate the `view` or do something extra
   // with the `region`
 });
@@ -638,7 +637,7 @@ var SomeRegion = Marionette.Region.extend({
 
 MyApp.someRegion = new SomeRegion();
 
-MyApp.getRegion('someRegion').show(someView, options);
+MyApp.someRegion.show(someView, options);
 ```
 
 You can optionally add an `initialize` function to your Region

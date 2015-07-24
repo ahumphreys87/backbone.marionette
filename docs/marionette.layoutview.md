@@ -298,7 +298,7 @@ var layoutView = new Marionette.LayoutView({
 });
 
 // Lastly, show the LayoutView in the App's mainRegion
-MyApp.rootView.getRegion('main').show(layoutView);
+MyApp.rootView.getRegion('main').show(layoutView, options);
 ```
 
 You can nest LayoutViews as deeply as you want. This provides for a well organized,
@@ -311,7 +311,7 @@ var layout1 = new Layout1();
 var layout2 = new Layout2();
 var layout3 = new Layout3();
 
-MyApp.rootView.getRegion('main').show(layout1);
+MyApp.rootView.getRegion('main').show(layout1, options);
 
 layout1.showChildView('region1', layout2);
 layout2.showChildView('region2', layout3);
