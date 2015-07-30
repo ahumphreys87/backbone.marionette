@@ -51,7 +51,7 @@ For a PR, we need at least the first 2 items to understand why you are changing
 the code. If not, we will ask that you add the necessary information.
 
 Please refrain from giving code examples in altJS languages like CoffeeScript,
-etc. Marionette is written in plain-old JavaScript and is generally easier for all
+etc. Marionette is written in plain-old JavaScript and is generally easier all
 members in the community to read.
 
 ### When you have a patch
@@ -126,7 +126,3 @@ it merged as soon as we can. For small things like typos and grammar, just click
 the "Edit this file" button and send in the pull request for the fix. For larger
 documentation changes, a regular pull request as outlined above is more
 appropriate.
-
-### Index Ordering
-
-If you want to order some doc files, just add changes to [consts.js](https://github.com/marionettejs/marionettejs.com/blob/master/tasks/consts.js) file in `marionettejs.com` [repository](https://github.com/marionettejs/marionettejs.com).
