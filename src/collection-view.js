@@ -503,11 +503,11 @@ Marionette.CollectionView = Marionette.AbstractView.extend({
 
   // render the child view
   _renderChildView: function(view, index, triggerBeforeShow, triggerBeforeAttach) {
-    if (!(view instanceof Marionette.View)) {
+    if (!view.supportsRenderLifecycle) {
       Marionette.triggerMethodOn(view, 'before:render', view);
     }
     view.render();
-    if (!(view instanceof Marionette.View)) {
+    if (!view.supportsRenderLifecycle) {
       Marionette.triggerMethodOn(view, 'render', view);
     }
     if (triggerBeforeShow) {
@@ -525,9 +525,7 @@ Marionette.CollectionView = Marionette.AbstractView.extend({
   buildChildView: function(child, ChildViewClass, childViewOptions) {
     var options = _.extend({model: child}, childViewOptions);
     var childView = new ChildViewClass(options);
-    if (!(childView instanceof Marionette.View)) {
-      Marionette.MonitorDOMRefresh(childView);
-    }
+    Marionette.MonitorDOMRefresh(childView);
     return childView;
   },
 
@@ -540,14 +538,18 @@ Marionette.CollectionView = Marionette.AbstractView.extend({
 
     this.triggerMethod('before:remove:child', view);
 
-      // call 'destroy' or 'remove', depending on which is found
-      if (view.destroy) {
-        view.destroy();
-      } else if (view.remove) {
-        Marionette.triggerMethodOn(view, 'before:destroy', view);
-        view.remove();
-        Marionette.triggerMethodOn(view, 'destroy', view);
-      }
+    if (!view.supportsDestroyLifecycle) {
+      Marionette.triggerMethodOn(view, 'before:destroy', view);
+    }
+    // call 'destroy' or 'remove', depending on which is found
+    if (view.destroy) {
+      view.destroy();
+    } else if (view.remove) {
+      view.remove();
+    }
+    if (!view.supportsDestroyLifecycle) {
+      Marionette.triggerMethodOn(view, 'destroy', view);
+    }
 
     delete view._parent;
     this.stopListening(view);
