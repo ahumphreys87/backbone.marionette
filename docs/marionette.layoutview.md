@@ -27,7 +27,7 @@ will provide features such as `onShow` callbacks, etc. Please see
 
 * [Basic Usage](#basic-usage)
 * [Region Options](#region-options)
-* [LayoutView.childEvents](#layoutview-childevents)
+* [LayoutView.childViewEvents](#layoutview-childevents)
 * [Specifying Regions As A Function](#specifying-regions-as-a-function)
 * [Overriding the default RegionManager](#overriding-the-default-regionmanager)
 * [Region Availability](#region-availability)
@@ -104,15 +104,15 @@ new Marionette.LayoutView({
 })
 ```
 
-### LayoutView childEvents
+### LayoutView childViewEvents
 
-A `childEvents` hash or method permits handling of child view events without manually setting bindings. The values of the hash can either be a function or a string method name on the collection view.
+A `childViewEvents` hash or method permits handling of child view events without manually setting bindings. The values of the hash can either be a function or a string method name on the collection view.
 
 ```js
-// childEvents can be specified as a hash...
+// childViewEvents can be specified as a hash...
 var MyLayoutView = Marionette.LayoutView.extend({
 
-  childEvents: {
+  childViewEvents: {
     // This callback will be called whenever a child is rendered or emits a `render` event
     render: function() {
       console.log('A child view has been rendered.');
@@ -123,7 +123,7 @@ var MyLayoutView = Marionette.LayoutView.extend({
 // ...or as a function that returns a hash.
 var MyLayoutView = Marionette.LayoutView.extend({
 
-  childEvents: function() {
+  childViewEvents: function() {
     return {
       render: this.onChildRendered
     }
@@ -135,14 +135,11 @@ var MyLayoutView = Marionette.LayoutView.extend({
 });
 ```
 
-`childEvents` also catches custom events fired by a child view.  Take note that the first argument to a `childEvents` handler is the child view itself.  Caution: Events triggered on the child view through `this.trigger` are not yet supported for LayoutView `childEvents`.  Use strictly `triggerMethod` within the child view.
+`childViewEvents` also catches custom events fired by a child view.  Take note that the first argument to a `childViewEvents` handler is the child view itself.  Caution: Events triggered on the child view through `this.trigger` are not yet supported for LayoutView `childViewEvents`.  Use strictly `triggerMethod` within the child view.
 
 ```js
-  // The child view fires a custom event, `show:message`
-  var ChildView = new Marionette.View.extend({
-    events: {
-      'click .button': 'showMessage'
-    },
+// The child view fires a custom event, `show:message`
+var ChildView = Marionette.View.extend({
 
   // Events hash defines local event handlers that in turn may call `triggerMethod`.
   events: {
@@ -159,10 +156,10 @@ var MyLayoutView = Marionette.LayoutView.extend({
   }
 });
 
-// The parent uses childEvents to catch that custom event on the child view
+// The parent uses childViewEvents to catch that custom event on the child view
 var ParentView = Marionette.LayoutView.extend({
 
-  childEvents: {
+  childViewEvents: {
     'show:message': 'onChildShowMessage',
     'submit:form': 'onChildSubmitForm'
   },
@@ -170,8 +167,7 @@ var ParentView = Marionette.LayoutView.extend({
   onChildShowMessage: function (childView, message) {
     console.log('A child view fired show:message with ' + message);
   },
-  // Methods called from the triggers hash do not have access to DOM events
-  // Any logic requiring the original DOM event should be handled in it's respective view
+
   onChildSubmitForm: function (childView) {
     console.log('A child view fired submit:form');
   }
