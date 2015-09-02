@@ -92,17 +92,12 @@ Marionette.CollectionView = Marionette.AbstractView.extend({
 
   // Handle a child added to the collection
   _onCollectionAdd: function(child, collection, opts) {
-    var index;
-    if (opts.at !== undefined && !this.getOption('filter')) {
-      index = opts.index;
-      if (!index) {
-        // ignore sorting with at options specified
-        index = this.getViewComparator() ?
-                collection.indexOf(child) :
-                _.indexOf(this._filteredSortedModels(), child);
-      }
-    } else {
-      index = _.indexOf(this._filteredSortedModels(), child);
+    // `index` is present when adding with `at` since BB 1.2; indexOf fallback for < 1.2
+    var index = opts.at !== undefined && (opts.index || collection.indexOf(child));
+
+    // When filtered or when there is no initial index, calculate index.
+    if (this.getOption('filter') || index === false) {
+      index = _.indexOf(this._filteredSortedModels(index), child);
     }
 
     if (this._shouldAddChild(child, index)) {
@@ -308,12 +303,9 @@ Marionette.CollectionView = Marionette.AbstractView.extend({
   },
 
   // Allow the collection to be sorted by a custom view comparator
-  _filteredSortedModels: function() {
-    if (!this.collection) {
-      return [];
-    }
+  _filteredSortedModels: function(addedAt) {
+    if (!this.collection) { return []; }
 
-    var models;
     var viewComparator = this.getViewComparator();
     var models = this.collection.models;
     addedAt = Math.min(Math.max(addedAt, 0), models.length - 1);
@@ -544,7 +536,7 @@ Marionette.CollectionView = Marionette.AbstractView.extend({
     // call 'destroy' or 'remove', depending on which is found
     if (view.destroy) {
       view.destroy();
-    } else if (view.remove) {
+    } else {
       view.remove();
     }
     if (!view.supportsDestroyLifecycle) {
