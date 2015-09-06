@@ -55,8 +55,8 @@ will provide features such as `onShow` callbacks, etc. Please see
   * ["before:remove:child event](#beforeremovechild-event)
   * ["remove:child" event](#removechild-event)
   * ["childview:\*" event bubbling from child views](#childview-event-bubbling-from-child-views)
-  * ["before:render:collection" event](#beforerendercollection-event)
-  * ["render:collection" event](#rendercollection-event)
+  * ["before:render:children" event](#beforerenderchildren-event)
+  * ["render:children" event](#renderchildren-event)
   * ["before:render:empty" event](#beforerenderempty-event)
   * ["render:empty" event](#renderempty-event)
   * ["before:remove:empty" event](#beforeremoveempty-event)
@@ -634,7 +634,7 @@ view instance (see [above](#callback-methods)).
 
 
 Triggers just prior to the view being rendered. Also triggered as
-"before:render:collection" / `onBeforeRenderCollection`.
+"before:render:children" / `onBeforeRenderChildren`.
 
 ```js
 var MyView = Marionette.CollectionView.extend({...});
@@ -650,7 +650,7 @@ myView.render();
 
 ### "render" event
 
-A "render:collection" / `onRenderCollection` event will also be fired. This allows you to
+A "render:children" / `onRenderChildren` event will also be fired. This allows you to
 add more than one callback to execute after the view is rendered,
 and allows parent views and other parts of the application to
 know that the view was rendered.
@@ -664,7 +664,7 @@ myView.on("render", function(){
   alert("the collection view was rendered!");
 });
 
-myView.on("render:collection", function(){
+myView.on("render:children", function(){
   alert("the collection view was rendered!");
 });
 
@@ -854,34 +854,13 @@ will appear that says: I said, 'do something!'
 It's also possible to attach the event manually using the usual
 `view.on('childview:do:something')`.
 
-### before:render:collection event
+### before:render:children event
 
-The `before:render:collection` event is triggered before the `collectionView`'s children have been rendered and buffered. It differs from the `collectionsView`'s `before:render` in that it is __only__ emitted if the `collection` is not empty.
+The `before:render:children` event is triggered before the `collectionView`'s children have been rendered and buffered. It differs from the `collectionsView`'s `before:render` in that it is __only__ emitted if the `collection` is not empty.
 
-### render:collection event
+### render:children event
 
-The `render:collection` event is triggered after a `collectionView`'s children have been rendered and buffered. It differs from the `collectionViews`'s `render` event in that it happens __only__ if the `collection` is not empty.
-
-## CollectionView Child View Events
-
-The following events are raised on child views during rendering and destruction of child views, which is consistent with the view lifecycle experienced during `Region#show`.
-
-* `before:render` / `onBeforeRender` - Called before the view is rendered.
-* `render` / `onRender` - Called after the view is rendered, but before it is attached to the DOM.
-* `before:show` / `onBeforeShow` - Called after the view has been rendered, but before it has been bound to the CollectionView.
-* `before:attach` / `onBeforeAttach` - Called before the view is attached to the DOM.  This will not fire if the CollectionView itself is not attached.
-* `attach` / `onAttach` - Called after the view is attached to the DOM.  This will not fire if the CollectionView itself is not attached.
-* `show` / `onShow` - Called when the view has been rendered and bound to the CollectionView.
-* `dom:refresh` / `onDomRefresh` - Called when the view is both rendered and shown, but only if it is attached to the DOM.  This will not fire if the CollectionView itself is not attached.
-* `before:destroy` / `onBeforeDestroy` - Called before destroying a view.
-* `destroy` / `onDestroy` - Called after destroying a view.
-
-Note: `render`, `destroy`, and `dom:refresh` are triggered on pure Backbone Views during child view rendering, but for a complete implementation of these events the Backbone View should fire `render` within `render()` and `destroy` within `remove()` as well as set the following flags:
-
-```js
-view.supportsRenderLifecycle = true;
-view.supportsDestroyLifecycle = true;
-```
+The `render:children` event is triggered after a `collectionView`'s children have been rendered and buffered. It differs from the `collectionViews`'s `render` event in that it happens __only__ if the `collection` is not not empty.
 
 ### "before:render:empty" event
 
