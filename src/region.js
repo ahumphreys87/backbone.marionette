@@ -53,7 +53,8 @@ Marionette.Region = Marionette.Object.extend({
     var replaceElement  = !!showOptions.replaceElement;
 
     // We are only changing the view if there is a current view to change to begin with
-    var isChangingView = !!this.currentView;
+    var changingView = this.currentView;
+    var isChangingView = !!changingView;
 
     // Only destroy the current view if we don't want to `preventDestroy` and if
     // the view given in the first argument is different than `currentView`
@@ -68,7 +69,7 @@ Marionette.Region = Marionette.Object.extend({
     var _shouldReplaceElement = replaceElement;
 
     if (isChangingView) {
-      this.triggerMethod('before:swapOut', this.currentView, this, options);
+      this.triggerMethod('before:swapOut', changingView, this, options);
     }
 
     if (this.currentView && isDifferentView) {
@@ -111,7 +112,7 @@ Marionette.Region = Marionette.Object.extend({
       Marionette.triggerMethodOn(view, 'before:show', view, this, options);
 
       if (isChangingView) {
-        this.triggerMethod('swapOut', this.currentView, this, options);
+        this.triggerMethod('swapOut', changingView, this, options);
       }
 
       // An array of views that we're about to display
