@@ -117,7 +117,7 @@ describe('region', function() {
         el: '#region',
         onBeforeShow: function() {},
         onShow: function() {},
-        onSwap: function() {},
+        onSwapIn: function() {},
         onBeforeSwapOut: function() {},
         onSwapOut: function() {}
       });
@@ -157,14 +157,14 @@ describe('region', function() {
       this.regionOnBeforeShowSpy = this.sinon.spy(this.myRegion, 'onBeforeShow');
       this.regionOnShowSpy = this.sinon.spy(this.myRegion, 'onShow');
       this.regionOnAttachHtmlSpy = this.sinon.spy(this.myRegion, 'attachHtml');
-      this.regionOnSwapSpy = this.sinon.spy(this.myRegion, 'onSwap');
+      this.regionOnSwapSpy = this.sinon.spy(this.myRegion, 'onSwapIn');
       this.regionOnBeforeSwapOutSpy = this.sinon.spy(this.myRegion, 'onBeforeSwapOut');
       this.regionOnSwapOutSpy = this.sinon.spy(this.myRegion, 'onSwapOut');
 
       this.myRegion.on('show', this.regionShowSpy);
       this.myRegion.on('before:show', this.regionBeforeShowSpy);
-      this.myRegion.on('before:swap', this.regionBeforeSwapSpy);
-      this.myRegion.on('swap', this.regionSwapSpy);
+      this.myRegion.on('before:swapIn', this.regionBeforeSwapSpy);
+      this.myRegion.on('swapIn', this.regionSwapSpy);
       this.myRegion.on('empty', this.regionEmptySpy);
       this.myRegion.on('before:empty', this.regionBeforeEmptySpy);
       this.view.on('before:show', this.viewBeforeShowSpy);
@@ -292,7 +292,7 @@ describe('region', function() {
       expect(this.regionShowSpy).to.have.been.calledOn(this.myRegion);
     });
 
-    it('should not trigger a before swap event for the region', function() {
+    it('should not trigger a before swapIn event for the region', function() {
       expect(this.regionBeforeSwapSpy).to.have.not.been.called;
     });
 
@@ -304,11 +304,11 @@ describe('region', function() {
       expect(this.regionOnSwapOutSpy).to.have.not.been.called;
     });
 
-    it('should not trigger a swap event for the region', function() {
+    it('should not trigger a swapIn event for the region', function() {
       expect(this.regionSwapSpy).to.have.not.been.called;
     });
 
-    it('should not call the `onSwap` function on the region', function() {
+    it('should not call the `onSwapIn` function on the region', function() {
       expect(this.regionOnSwapSpy).to.have.not.been.called;
     });
 
@@ -332,11 +332,11 @@ describe('region', function() {
         this.myRegion.show(this.view2, this.otherOptions);
       });
 
-      it('should trigger a before swap event for the region', function() {
+      it('should trigger a before swapIn event for the region', function() {
         expect(this.regionBeforeSwapSpy).to.have.been.called;
       });
 
-      it('should pass the shown view, region and options arguments to the regions before swap event', function() {
+      it('should pass the shown view, region and options arguments to the regions before swapIn event', function() {
         expect(this.regionBeforeSwapSpy).to.have.been.calledWith(this.view2, this.myRegion, this.otherOptions);
       });
 
@@ -345,23 +345,23 @@ describe('region', function() {
         expect(this.regionBeforeEmptySpy).to.have.been.calledOnce;
       });
 
-      it('should trigger a swap event for the region', function() {
+      it('should trigger a swapIn event for the region', function() {
         expect(this.regionSwapSpy).to.have.been.called;
       });
 
-      it('should pass the swapped view, region and options as arguments for the swap event for the region', function() {
+      it('should pass the swapped view, region and options as arguments for the swapIn event for the region', function() {
         expect(this.regionSwapSpy).to.have.been.calledWith(this.view2, this.myRegion, this.otherOptions);
       });
 
-      it('should call the `onSwap` function on the region', function() {
+      it('should call the `onSwapIn` function on the region', function() {
         expect(this.regionOnSwapSpy).to.have.been.called;
       });
 
-      it('should pass the swapped view, region and options as arguments for the swap event', function() {
+      it('should pass the swapped view, region and options as arguments for the swapIn event', function() {
         expect(this.regionOnSwapSpy).to.have.been.calledWith(this.view2, this.myRegion, this.otherOptions);
       });
 
-      it('should set "this" to the manager, from the swap event', function() {
+      it('should set "this" to the manager, from the swapIn event', function() {
         expect(this.regionOnSwapSpy).to.have.been.calledOn(this.myRegion);
       });
 
@@ -396,7 +396,7 @@ describe('region', function() {
         this.MyRegion = Backbone.Marionette.Region.extend({
           el: '#region',
           onShow: function() {},
-          onSwap: function() {}
+          onSwapIn: function() {}
         });
 
         this.MyView2 = Backbone.View.extend({
