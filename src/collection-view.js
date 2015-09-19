@@ -642,9 +642,7 @@ Marionette.CollectionView = Marionette.AbstractView.extend({
   destroy: function() {
     if (this._isDestroyed) { return this; }
 
-    this.triggerMethod('before:destroy:children');
     this.destroyChildren({checkEmpty: false});
-    this.triggerMethod('destroy:children');
 
     return Marionette.AbstractView.prototype.destroy.apply(this, arguments);
   },
@@ -652,6 +650,7 @@ Marionette.CollectionView = Marionette.AbstractView.extend({
   // Destroy the child views that this collection view
   // is holding on to, if any
   destroyChildren: function(options) {
+    this.triggerMethod('before:destroy:children');
     var destroyOptions = options || {};
     var shouldCheckEmpty = true;
     var childViews = this.children.map(_.identity);
@@ -665,6 +664,8 @@ Marionette.CollectionView = Marionette.AbstractView.extend({
     if (shouldCheckEmpty) {
       this.checkEmpty();
     }
+
+    this.triggerMethod('destroy:children');
     return childViews;
   },
 
