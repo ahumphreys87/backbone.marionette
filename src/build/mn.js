@@ -31,7 +31,6 @@ Marionette.noConflict = function() {
 // @include ../radio-helpers.js
 
 // @include ../error.js
-// @include ../metal.js
 
 // @include ../object.js
 // @include ../region.js

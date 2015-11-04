@@ -33,9 +33,9 @@ global.Backbone.$ = global.$;
 global.Marionette = Backbone.Marionette = {};
 
 requireHelper('features');
-Marionette.FEATURES.class = true;
 
-global.Metal = require('backbone-metal');
+// Add Feature overrides here
+// e.g.  Marionette.FEATURES.class = true;
 
 require('backbone.babysitter');
 require('backbone.radio');
@@ -57,7 +57,6 @@ requireHelper('utils/normalizeUIValues');
 requireHelper('utils/deprecate');
 
 requireHelper('dom-refresh');
-requireHelper('metal');
 requireHelper('object');
 requireHelper('app-router');
 requireHelper('application');
