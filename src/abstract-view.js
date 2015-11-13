@@ -393,27 +393,17 @@ var AbstractView = Backbone.View.extend({
     }, children);
   },
 
-  // Walk the _parent tree until we find a layout view (if one exists).
-  // Returns the parent layout view hierarchically closest to this view.
-  _parentLayoutView: function() {
+  // Walk the _parent tree until we find a view (if one exists).
+  // Returns the parent view hierarchically closest to this view.
+  _parentItemView: function() {
     var parent  = this._parent;
 
     while (parent) {
-      if (parent instanceof Marionette.LayoutView) {
+      if (parent instanceof AbstractView) {
         return parent;
       }
       parent = parent._parent;
     }
-
-    return ancestors;
-  },
-
-  // Returns the containing parent view.
-  _parentItemView: function() {
-    var ancestors = this._getAncestors();
-    return _.find(ancestors, function(parent) {
-      return parent instanceof AbstractView;
-    });
   },
 
   // Imports the "normalizeMethods" to transform hashes of
