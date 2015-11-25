@@ -733,7 +733,7 @@ describe('collection view', function() {
       this.sinon.spy(this.childView, 'destroy');
       this.sinon.spy(this.collectionView, '_onCollectionRemove');
       this.sinon.spy(this.collectionView, 'stopListening');
-      this.sinon.spy(this.collectionView, 'remove');
+      this.sinon.spy(this.collectionView, '_removeElement');
       this.sinon.spy(this.collectionView, 'someCallback');
       this.sinon.spy(this.collectionView, 'someViewCallback');
       this.sinon.spy(this.collectionView, 'destroy');
@@ -781,7 +781,7 @@ describe('collection view', function() {
     });
 
     it('should remove the views EL from the DOM', function() {
-      expect(this.collectionView.remove).to.have.been.called;
+      expect(this.collectionView._removeElement).to.have.been.called;
     });
 
     it('should call "onDestroy" if provided', function() {
@@ -1399,16 +1399,6 @@ describe('collection view', function() {
 
     it('should not break', function() {
       // Intentionally left blank
-    });
-  });
-
-  describe('has a valid inheritance chain back to Backbone.View', function() {
-    beforeEach(function() {
-      this.collectionView = new this.ChildView();
-    });
-
-    it('calls the parent Backbone.View constructor function on instantiation', function() {
-      expect(Backbone.View).to.have.been.called;
     });
   });
 

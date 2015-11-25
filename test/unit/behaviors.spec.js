@@ -573,7 +573,7 @@ describe('Behaviors', function() {
         }
       });
 
-      this.View = Marionette.AbstractView.extend({
+      this.View = Marionette.View.extend({
         behaviors: {foo: {behaviorClass: this.FooBehavior}}
       });
 
@@ -669,7 +669,7 @@ describe('Behaviors', function() {
       };
       Marionette.Behaviors.behaviorsLookup = this.behaviors;
 
-      this.View = Marionette.AbstractView.extend({
+      this.View = Marionette.View.extend({
         behaviors: {foo: {}}
       });
 
@@ -693,7 +693,7 @@ describe('Behaviors', function() {
       };
       Marionette.Behaviors.behaviorsLookup = this.behaviors;
 
-      this.View = Marionette.AbstractView.extend({
+      this.View = Marionette.View.extend({
         behaviors: {foo: {}},
 
         onFoo: function() {
@@ -866,7 +866,7 @@ describe('Behaviors', function() {
       this.behaviors = {foo: Marionette.Behavior};
       Marionette.Behaviors.behaviorsLookup = this.behaviors;
 
-      this.View = Marionette.AbstractView.extend({
+      this.View = Marionette.View.extend({
         behaviors: {foo: {}}
       });
 
