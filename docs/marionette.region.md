@@ -232,7 +232,8 @@ and `empty` methods to display and shut-down a view:
 var myView = new MyView();
 
 // render and display the view
-MyApp.mainRegion.show(myView, options);
+MyApp.getRegion('mainRegion').show(myView, options);
+
 
 // empties the current view
 MyApp.getRegion('mainRegion').empty();
