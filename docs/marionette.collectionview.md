@@ -653,7 +653,7 @@ var TableView = Marionette.View.extend({
 
   regions: {
     body: {
-      selector: 'tbody',
+      el: 'tbody',
       replaceElement: true
     }
   },
@@ -737,7 +737,7 @@ var TreeNode = Marionette.View.extend({
 
   regions: {
     tree: {
-      selector: 'ul',
+      el: 'ul',
       replaceElement: true
     }
   },
