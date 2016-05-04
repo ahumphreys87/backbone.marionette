@@ -360,14 +360,14 @@ describe('Behaviors', function() {
             'click @ui.bar': 'onBarClick'
           },
 
-          testViewUI:     function() { this.ui.bar.trigger('test'); },
+          testViewUI: function() { this.ui.bar.trigger('test'); },
           testBehaviorUI: function() { this.ui.foo.trigger('test'); },
-          onRender:       this.onRenderStub,
+          onRender: this.onRenderStub,
           onBeforeAttach: this.onBeforeAttachStub,
-          onAttach:       this.onAttachStub,
-          onDestroy:      this.onDestroyStub,
-          onFooClick:     this.onFooClickStub,
-          onBarClick:     this.onBarClickStub
+          onAttach: this.onAttachStub,
+          onDestroy: this.onDestroyStub,
+          onFooClick: this.onFooClickStub,
+          onBarClick: this.onBarClickStub
         })
       };
       Marionette.Behaviors.behaviorsLookup = this.behaviors;
@@ -541,7 +541,7 @@ describe('Behaviors', function() {
 
       this.behaviors = {
         foo: Marionette.Behavior.extend({
-          onAttach:  this.onAttachStub,
+          onAttach: this.onAttachStub,
           onDestroy: this.onDestroyStub
         })
       };
@@ -806,7 +806,7 @@ describe('Behaviors', function() {
       this.collection = new Backbone.Collection();
 
       this.view = new this.View({
-        model:      this.model,
+        model: this.model,
         collection: this.collection
       });
 

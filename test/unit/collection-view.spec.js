@@ -90,13 +90,13 @@ describe('collection view', function() {
         childViewEvents: {
           'render': 'onChildViewRender'
         },
-        onBeforeRender:           function() { return this.isRendered(); },
-        onRender:                 function() { return this.isRendered(); },
-        onBeforeAddChild:         this.sinon.stub(),
-        onAddChild:               this.sinon.stub(),
+        onBeforeRender: function() { return this.isRendered(); },
+        onRender: function() { return this.isRendered(); },
+        onBeforeAddChild: this.sinon.stub(),
+        onAddChild: this.sinon.stub(),
         onBeforeRenderChildren: this.sinon.stub(),
-        onRenderChildren:       this.sinon.stub(),
-        onChildViewRender:        this.sinon.stub()
+        onRenderChildren: this.sinon.stub(),
+        onChildViewRender: this.sinon.stub()
       });
 
       this.collection = new Backbone.Collection([{foo: 'bar'}, {foo: 'baz'}]);
@@ -301,7 +301,7 @@ describe('collection view', function() {
   describe('when rendering a collection view without a collection', function() {
     beforeEach(function() {
       var CollectionView = this.CollectionView.extend({
-        onRender:       this.sinon.stub(),
+        onRender: this.sinon.stub(),
         onBeforeRender: this.sinon.stub()
       });
       this.collectionView = new CollectionView();
@@ -346,14 +346,14 @@ describe('collection view', function() {
   describe('when sorting a collection', function() {
     beforeEach(function() {
       this.collection = new Backbone.Collection([{
-          foo: 'foo'
-        }, {
-          foo: 'bar'
-        }, {
-          foo: 'biz'
-        }, {
-          foo: 'baz'
-        }
+        foo: 'foo'
+      }, {
+        foo: 'bar'
+      }, {
+        foo: 'biz'
+      }, {
+        foo: 'baz'
+      }
       ]);
       this.collection.comparator = function(model) {
         return model.get('foo');
@@ -373,7 +373,7 @@ describe('collection view', function() {
 
     it('should not update the order of children when "sort" is set to "false" inside options', function() {
       this.collectionView = new this.CollectionView({
-        sort : false,
+        sort: false,
         collection: this.collection
       });
       this.collectionView.render();
