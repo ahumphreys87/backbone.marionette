@@ -167,27 +167,10 @@ Mn.AppRouter.extend({
 The object that is used as the `controller` has no requirements, other than it
 will contain the methods that you specified in the `appRoutes`.
 
-### Using Marionette.Object
-
-A controller can also be an instance of
-[`Marionette.Object`](./marionette.object.md) - this is useful for cases where
-you want to access the helper tools of the Object API and pass through
-information on instantiation.
-
-## Multiple Routers
-
-Marionette allows you to run multiple AppRouters in a single application. It's
-recommended that you break your routing into multiple sections, each with its
-own router and/or controller setting up the views for their own components. This
-will make it much easier to find and manage your route-handling logic as your
-application grows in complexity.
-
-## Backbone History
-
-The [Backbone History API][backbone-history] monitors the browser's location bar
-and triggers route changes on your app routers. It also provides a set of
-methods to change the contents of the location bar manually when you want to
-expose functionality to your user via a URL:
+```javascript
+var myObj = {
+  someMethod: function(){ /*...*/ }
+};
 
 ```javascript
 var Bb = require('backbone');
